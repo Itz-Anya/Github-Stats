@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "functions": {
+    "api/stats.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/stats",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=1800, stale-while-revalidate=86400" },
+        { "key": "Content-Type", "value": "image/svg+xml" }
+      ]
+    }
+  ]
+}
