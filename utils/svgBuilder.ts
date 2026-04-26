@@ -116,7 +116,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   <!-- Avatar -->
   <image
-    href="${user.avatarUrl}"
+    xlink:href="${user.avatarUrl}"
     x="${PADDING}" y="${PADDING}"
     width="${AVATAR_SIZE}" height="${AVATAR_SIZE}"
     clip-path="url(#avatar-clip)"
