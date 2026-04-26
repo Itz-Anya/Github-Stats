@@ -42,6 +42,21 @@ interface GraphQLResponse {
   errors?: Array<{ message: string }>;
 }
 
+
+
+
+async function fetchImageAsBase64(url: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("AVATAR_FETCH_FAILED");
+
+  const contentType = res.headers.get("content-type") || "image/png";
+  const buffer = Buffer.from(await res.arrayBuffer());
+
+  return `data:${contentType};base64,${buffer.toString("base64")}`;
+}
+
+
+
 const GITHUB_API = "https://api.github.com";
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
 const TOKEN = process.env.GITHUB_TOKEN ?? "";
@@ -191,11 +206,12 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
     fetchRestUser(username),
     fetchGraphQLStats(username),
   ]);
+  const avatarBase64 = await fetchImageAsBase64(restUser.avatar_url);
 
   return {
     login: restUser.login,
     name: restUser.name,
-    avatarUrl: restUser.avatar_url,
+    avatarUrl: avatarBase64,
     bio: restUser.bio,
     publicRepos: restUser.public_repos,
     followers: restUser.followers,
