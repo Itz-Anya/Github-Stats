@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbe4ef" />
+<meta name="color-scheme" content="light dark" />
+<title>GitHub Stats Card Generator</title>
+<meta name="description" content="Generate beautiful, customizable GitHub stats cards with a sakura-pink design. Themes, toggles, and instant markdown for your README." />
+<meta name="author" content="Anya & Murali" />
+<meta name="creator" content="Anya & Murali" />
+<meta name="publisher" content="GitHub Stats" />
+<meta name="application-name" content="GitHub Stats" />
+<meta name="apple-mobile-web-app-title" content="GitHub Stats" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="keywords" content="github stats, github readme, stats card generator, sakura, dev profile, readme badges, github profile" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="GitHub Stats" />
+<meta property="og:title" content="GitHub Stats — Sakura Cards Generator" />
+<meta property="og:description" content="Craft your blossoming dev identity card with a beautiful sakura-pink theme." />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="GitHub Stats — Sakura Cards" />
+<meta name="twitter:description" content="Beautiful, customizable GitHub stats cards. Sakura-themed. Made by Anya & Murali." />
+<meta name="robots" content="index, follow" />
+<meta name="googlebot" content="index, follow, max-image-preview:large" />
+
+<link rel="icon" type="image/png" href="s.png" />
+<link rel="apple-touch-icon" href="s.png" />
+<link rel="shortcut icon" href="s.png" />
+<meta property="og:image" content="s.png" />
+<meta name="twitter:image" content="s.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" />
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          sans: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        },
+        colors: {
+          background: 'var(--background)',
+          foreground: 'var(--foreground)',
+          card: 'var(--card)',
+          'card-foreground': 'var(--card-foreground)',
+          primary: 'var(--primary)',
+          'primary-foreground': 'var(--primary-foreground)',
+          secondary: 'var(--secondary)',
+          muted: 'var(--muted)',
+          'muted-foreground': 'var(--muted-foreground)',
+          accent: 'var(--accent)',
+          destructive: 'var(--destructive)',
+          border: 'var(--border)',
+          input: 'var(--input)',
+          ring: 'var(--ring)',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.985 0.012 350);
+  --foreground: oklch(0.28 0.06 350);
+  --card: oklch(1 0.005 340);
+  --card-foreground: oklch(0.28 0.06 350);
+  --primary: oklch(0.72 0.17 350);
+  --primary-foreground: oklch(0.99 0.005 350);
+  --secondary: oklch(0.95 0.03 340);
+  --muted: oklch(0.96 0.018 340);
+  --muted-foreground: oklch(0.55 0.06 345);
+  --accent: oklch(0.92 0.06 340);
+  --destructive: oklch(0.62 0.22 25);
+  --border: oklch(0.9 0.04 340);
+  --input: oklch(0.93 0.03 340);
+  --ring: oklch(0.72 0.17 350);
+
+  --sakura: oklch(0.78 0.14 350);
+  --sakura-deep: oklch(0.62 0.2 355);
+  --sakura-soft: oklch(0.92 0.06 345);
+  --blossom: oklch(0.85 0.11 25);
+  --petal: oklch(0.88 0.09 340);
+  --success: oklch(0.7 0.16 155);
+
+  --gradient-sakura: linear-gradient(135deg, oklch(0.82 0.13 345), oklch(0.7 0.18 355) 50%, oklch(0.78 0.14 25));
+  --gradient-mesh:
+    radial-gradient(at 20% 10%, oklch(0.92 0.08 345) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, oklch(0.9 0.09 25) 0px, transparent 50%),
+    radial-gradient(at 80% 90%, oklch(0.93 0.07 320) 0px, transparent 50%),
+    radial-gradient(at 20% 80%, oklch(0.95 0.05 350) 0px, transparent 50%);
+
+  --shadow-petal: 0 10px 40px -10px oklch(0.72 0.17 350 / 0.35);
+  --shadow-soft: 0 8px 32px -8px oklch(0.62 0.2 355 / 0.18);
+  --shadow-glow: 0 0 0 1px oklch(0.72 0.17 350 / 0.2), 0 12px 50px -12px oklch(0.72 0.17 350 / 0.45);
+}
+
+* { border-color: var(--border); }
+html, body {
+  background: var(--gradient-mesh), var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeSpeed;
+}
+
+#root { min-height: 100dvh; }
+::selection { background: var(--sakura); color: var(--primary-foreground); }
+
+.font-display { font-family: 'Fraunces', ui-serif, Georgia, serif; }
+.font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+.bg-card { background-color: var(--card); }
+.bg-background { background-color: var(--background); }
+.bg-muted { background-color: var(--muted); }
+.bg-secondary { background-color: var(--secondary); }
+.text-foreground { color: var(--foreground); }
+.text-muted-foreground { color: var(--muted-foreground); }
+.text-destructive { color: var(--destructive); }
+.text-primary { color: var(--primary); }
+.border-border { border-color: var(--border); }
+
+@keyframes gradient-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.gradient-text {
+  background: linear-gradient(135deg, oklch(0.7 0.2 355), oklch(0.78 0.16 25), oklch(0.72 0.17 320), oklch(0.7 0.2 355));
+  background-size: 300% 300%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+@keyframes blossom-pulse {
+  0%,100%{box-shadow:0 0 0 0 oklch(0.72 0.17 350 / 0.4), var(--shadow-petal)}
+  50%{box-shadow:0 0 0 12px oklch(0.72 0.17 350 / 0), var(--shadow-glow)}
+}
+.btn-blossom { animation: blossom-pulse 2.6s ease-in-out infinite; }
+@keyframes border-shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.card-shimmer {
+  background: linear-gradient(135deg, oklch(0.82 0.13 345), oklch(0.7 0.18 355), oklch(0.78 0.14 25), oklch(0.82 0.13 345));
+  background-size: 300% 300%;
+  animation: border-shimmer 5s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skeleton-shimmer {
+  background: linear-gradient(90deg, oklch(0.94 0.04 345) 25%, oklch(0.97 0.02 345) 50%, oklch(0.94 0.04 345) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+@keyframes slide-up { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.animate-slide-up { animation: slide-up 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+@keyframes float-in { from{opacity:0;transform:translateY(40px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+.animate-float-in { animation: float-in 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { scrollbar-width: none; }
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
+
+@keyframes petal-fall {
+  0%   { transform: translateY(-20px) translateX(0) rotate(0deg) scale(1); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(110vh) translateX(60px) rotate(360deg) scale(0.7); opacity: 0; }
+}
+@keyframes petal-sway {
+  0%, 100% { margin-left: 0; }
+  25%       { margin-left: 18px; }
+  75%       { margin-left: -14px; }
+}
+.sakura-petal {
+  position: fixed;
+  top: -30px;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  animation: petal-fall linear infinite, petal-sway ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+
+.logo-shadow {
+  filter:
+    drop-shadow(0 4px 10px oklch(0.72 0.17 350 / 0.45))
+    drop-shadow(0 2px 4px oklch(0.62 0.2 355 / 0.35));
+}
+.logo-shadow-sm {
+  filter: drop-shadow(0 2px 4px oklch(0.72 0.17 350 / 0.5));
+}
+
+
+#root:not(:empty) + #boot-skeleton { display: none; }
+#boot-skeleton { animation: float-in 0.5s ease-out both; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+
+
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, memo } = React;
+
+
+function toPascal(name) {
+  return String(name)
+    .split(/[-_ ]+/)
+    .filter(Boolean)
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .join('');
+}
+const Icon = memo(function Icon({ name, size = 16, strokeWidth = 2, style }) {
+  const ref = useRef(null);
+  const [, force] = useState(0);
+  useEffect(() => {
+    const draw = () => {
+      const lib = window.lucide;
+      if (!ref.current || !lib || !lib.icons) return false;
+      const key = toPascal(name);
+      const def = lib.icons[key] || lib.icons[name];
+      if (!def) return false;
+      const node = lib.createElement(def);
+      node.setAttribute('width', size);
+      node.setAttribute('height', size);
+      node.setAttribute('stroke-width', strokeWidth);
+      ref.current.replaceChildren(node);
+      return true;
+    };
+    if (draw()) return;
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      if (draw() || tries > 80) clearInterval(t);
+    }, 30);
+    return () => clearInterval(t);
+  }, [name, size, strokeWidth]);
+  return <span ref={ref} style={{ display: 'inline-flex', width: size, height: size, ...style }} />;
+});
+
+
+const GitHubIcon = memo(function GitHubIcon({ size = 16, style }) {
+  return (
+    <svg
+      width={size} height={size} viewBox="0 0 24 24"
+      fill="currentColor" aria-hidden="true"
+      style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0, ...style }}>
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
+});
+
+
+
+
+
+const BASE = "https://anya-github-stats.vercel.app/api/stats";
+const THEMES = {
+  "🌑 Dark Dev": ["dark", "github_dark", "tokyonight", "dracula", "nord", "solarized", "monokai"],
+  "🌌 Futuristic": ["cyberpunk", "midnight", "ocean_dark", "neon_dreams", "galaxy", "aurora", "starlight"],
+  "☀️ Light": ["light", "github_light"],
+  "🌸 Pastel": ["sakura","rose_gold","lavender","cotton_candy","mint_fresh","peach_blossom","bubblegum","sunshine","ocean_breeze","cherry_blossom"],
+};
+const HIDE_STATS = ["repos","stars","forks","commits","prs","issues","reviews","followers","following","gists","watchers"];
+
+function buildStatsUrl(s) {
+  const p = new URLSearchParams();
+  p.set("username", s.username);
+  if (s.theme !== "dark") p.set("theme", s.theme);
+  if (!s.showIcons) p.set("show_icons", "false");
+  if (s.compact) p.set("compact", "true");
+  if (s.borderRadius !== 10) p.set("border_radius", String(s.borderRadius));
+  if (s.hidden.size) p.set("hide", [...s.hidden].join(","));
+  return `${BASE}?${p.toString()}`;
+}
+
+
+const PETAL_SHAPES = ['✿','❀','✾','✽','🌸'];
+function SakuraPetals({ count = 14 }) {
+  const petals = useMemo(() => Array.from({ length: count }, (_, i) => ({
+    id: i,
+    left: `${(i * 7.3 + 3) % 100}%`,
+    size: 12 + (i % 5) * 4,
+    duration: 7 + (i % 6) * 1.5,
+    swayDuration: 3 + (i % 4) * 0.8,
+    delay: -(i * 1.1),
+    opacity: 0.35 + (i % 3) * 0.15,
+    shape: PETAL_SHAPES[i % PETAL_SHAPES.length],
+    color: ['oklch(0.78 0.14 350)','oklch(0.82 0.13 345)','oklch(0.85 0.11 25)','oklch(0.72 0.17 355)'][i % 4],
+  })), [count]);
+  return (
+    <>
+      {petals.map(p => (
+        <span key={p.id} className="sakura-petal" style={{
+          left: p.left,
+          fontSize: p.size,
+          color: p.color,
+          opacity: p.opacity,
+          animationDuration: `${p.duration}s, ${p.swayDuration}s`,
+          animationDelay: `${p.delay}s, ${p.delay * 0.5}s`,
+        }}>{p.shape}</span>
+      ))}
+    </>
+  );
+}
+
+const PLACEHOLDERS = ["Enter Your Username", "Itz-Anya", "Itz-Murali"];
+
+function HeroStep({ onSubmit }) {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState("");
+  const [phIdx, setPhIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setPhIdx(i => (i + 1) % PLACEHOLDERS.length), 3200);
+    return () => clearInterval(t);
+  }, []);
+
+  const handleSubmit = (e) => {
+    e?.preventDefault();
+    const v = value.trim().replace(/^@/, "");
+    if (!v) return setError("Please enter a GitHub username");
+    if (!/^[a-zA-Z0-9-]{1,39}$/.test(v)) return setError("Invalid GitHub username");
+    setError(""); onSubmit(v);
+  };
+
+  return (
+    <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-12">
+      <SakuraPetals count={16} />
+      <div className="pointer-events-none absolute inset-0 opacity-50" style={{
+        backgroundImage: "linear-gradient(oklch(0.78 0.14 350 / 0.08) 1px, transparent 1px), linear-gradient(90deg, oklch(0.78 0.14 350 / 0.08) 1px, transparent 1px)",
+        backgroundSize: "44px 44px",
+        maskImage: "radial-gradient(ellipse 80% 70% at 50% 50%, black, transparent)",
+      }} />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60"
+        style={{ background: "radial-gradient(circle, oklch(0.85 0.12 345 / 0.45), transparent 70%)", filter: 'blur(40px)', willChange: 'opacity' }} />
+
+      <div className="relative z-10 mx-auto w-full max-w-lg animate-float-in">
+        
+        <div className="mb-7 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-[color:var(--sakura-soft)]/60 px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.22em] backdrop-blur"
+            style={{ borderColor: 'oklch(0.78 0.14 350 / 0.4)', color: 'var(--sakura-deep)' }}>
+            <Icon name="sparkles" size={12} />
+            GitHub Stats Generator
+          </span>
+        </div>
+
+        <h1 className="text-center font-display font-extrabold leading-[0.95] tracking-tight" style={{ fontSize: 'clamp(3rem,12vw,4.5rem)' }}>
+          GitHub <span className="gradient-text">Stats</span>
+        </h1>
+        <p className="mt-4 text-center font-mono text-sm text-muted-foreground">// craft your blossoming dev identity card</p>
+
+        <form onSubmit={handleSubmit} className="mt-10 space-y-3">
+          <div className="relative">
+            
+            <input
+              type="text" value={value}
+              onChange={(e) => { setValue(e.target.value); if (error) setError(""); }}
+              placeholder={PLACEHOLDERS[phIdx % PLACEHOLDERS.length]}
+              autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} 
+              className="w-full rounded-xl border-2 bg-white px-12 py-4 font-mono text-base tracking-wide text-black backdrop-blur transition-all focus:outline-none"
+              style={{ borderColor: 'var(--border)' }}
+              onFocus={e => e.target.style.borderColor = 'var(--sakura)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border)'}
+            />
+          </div>
+
+          <button type="submit"
+            className="btn-blossom flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 font-display text-base font-bold tracking-wide text-white transition-all hover:-translate-y-0.5 active:translate-y-0"
+            style={{ background: "var(--gradient-sakura)", boxShadow: 'var(--shadow-petal)' }}>
+            Generate My Stats <Icon name="arrow-right" size={18} />
+          </button>
+
+          <p className="min-h-5 text-center text-xs text-destructive" role="alert">{error}</p>
+        </form>
+
+        <p className="mt-8 text-center font-mono text-[0.7rem] uppercase tracking-[0.25em] text-muted-foreground">
+          ✿ powered by anya & murali ✿
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function Panel({ label, icon, children }) {
+  return (
+    <section>
+      <div className="mb-3 flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
+        {icon}<span>{label}</span>
+        <span className="ml-1 h-px flex-1" style={{ background: 'linear-gradient(to right, var(--border), transparent)' }} />
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function ToggleRow({ label, sub, checked, onChange, icon }) {
+  return (
+    <div className="flex items-center justify-between border-b py-3 last:border-b-0" style={{ borderColor: 'var(--border)' }}>
+      <div className="flex items-center gap-3">
+        {icon && <span className="grid h-8 w-8 place-items-center rounded-lg" style={{ background: 'oklch(0.92 0.06 345 / 0.6)', color: 'var(--sakura-deep)' }}>{icon}</span>}
+        <div>
+          <div className="text-sm text-foreground">{label}</div>
+          <div className="text-[0.7rem] text-muted-foreground">{sub}</div>
+        </div>
+      </div>
+      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)}
+        className="relative h-6 w-11 flex-shrink-0 rounded-full border-[1.5px] transition-all"
+        style={{
+          borderColor: checked ? 'var(--sakura-deep)' : 'var(--border)',
+          background: checked ? 'var(--sakura-soft)' : 'var(--muted)',
+        }}>
+        <span className="absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full transition-all"
+          style={{
+            left: checked ? '22px' : '3px',
+            background: checked ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+            boxShadow: checked ? '0 0 8px oklch(0.62 0.2 355 / 0.5)' : 'none',
+          }} />
+      </button>
+    </div>
+  );
+}
+
+function Snippet({ label, value, copied, onCopy }) {
+  return (
+    <div className="mb-2.5 last:mb-0">
+      <div className="mb-1 flex items-center justify-between">
+        <span className="font-mono text-[0.7rem] uppercase tracking-wider text-muted-foreground">{label}</span>
+        <button onClick={onCopy} className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-mono text-[0.7rem] transition-all"
+          style={{
+            background: copied ? 'oklch(0.7 0.16 155 / 0.15)' : 'var(--muted)',
+            color: copied ? 'var(--success)' : 'var(--muted-foreground)',
+          }}>
+          <Icon name={copied ? "check" : "copy"} size={11} />
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className="scrollbar-hide overflow-x-auto rounded-lg border px-3 py-2 font-mono text-[0.7rem]" style={{ borderColor: 'var(--border)', background: 'oklch(1 0.005 340 / 0.6)', color: 'oklch(0.28 0.06 350 / 0.85)' }}>
+        {value}
+      </pre>
+    </div>
+  );
+}
+
+
+function CustomizeStep({ username, onChangeUser }) {
+  const [state, setState] = useState({
+    username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
+  });
+  const [status, setStatus] = useState("loading");
+  const [previewUrl, setPreviewUrl] = useState(() => buildStatsUrl({
+    username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
+  }));
+  const [copiedKey, setCopiedKey] = useState(null);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setStatus("loading");
+    debounceRef.current = setTimeout(() => setPreviewUrl(buildStatsUrl(state)), 280);
+    return () => debounceRef.current && clearTimeout(debounceRef.current);
+  }, [state]);
+
+  const update = (k, v) => setState(s => ({ ...s, [k]: v }));
+  const toggleHidden = (stat) => setState(s => {
+    const next = new Set(s.hidden);
+    next.has(stat) ? next.delete(stat) : next.add(stat);
+    return { ...s, hidden: next };
+  });
+  const copy = async (key, text) => {
+    try { await navigator.clipboard.writeText(text); setCopiedKey(key); setTimeout(() => setCopiedKey(null), 1800); } catch {}
+  };
+
+  const finalUrl = buildStatsUrl(state);
+  const markdown = `![${state.username}'s GitHub Stats](${finalUrl})`;
+  const html = `<a href="https://github.com/${state.username}"><img src="${finalUrl}" alt="${state.username}'s GitHub Stats" /></a>`;
+
+  return (
+    <section className="animate-slide-up flex min-h-[100svh] flex-col">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b px-5 py-3 backdrop-blur-xl sm:px-8" style={{ borderColor: 'var(--border)', background: 'oklch(0.985 0.012 350 / 0.7)' }}>
+        <div className="flex items-center gap-2">
+          
+        		
+        	<span className="font-display text-base font-bold gradient-text">GitHub Stats</span>
+        </div>
+        <button onClick={onChangeUser}
+          className="inline-flex items-center gap-1.5 rounded-full border bg-card/60 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-muted-foreground transition-all hover:text-foreground"
+          style={{ borderColor: 'var(--border)' }}>
+          <Icon name="arrow-left" size={12} /> Change user
+        </button>
+      </header>
+
+      <div className="px-5 py-6 sm:px-8">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">✿ @{state.username}</span>
+          <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">{state.theme.replace(/_/g, " ")}</span>
+        </div>
+        <div className="card-shimmer relative rounded-2xl p-[3px]" style={{ boxShadow: 'var(--shadow-glow)' }}>
+          <div className="relative flex min-h-[180px] items-center justify-center overflow-hidden rounded-[14px] bg-card">
+            {status === "loading" && <div className="skeleton-shimmer absolute inset-0 rounded-[14px]" />}
+            {status === "error" && (
+              <div className="p-6 text-center text-sm text-muted-foreground">
+                <Icon name="image" size={28} /><br />
+                Could not load stats.<br />Check the username and try again.
+              </div>
+            )}
+            <img key={previewUrl} src={previewUrl} alt={`${state.username}'s GitHub Stats Card`}
+              onLoad={() => setStatus("ready")} onError={() => setStatus("error")}
+              className="block w-full rounded-[14px]"
+              style={{ display: status === "ready" ? "block" : "none" }} />
+          </div>
+        </div>
+      </div>
+
+      <div className="scrollbar-thin flex-1 space-y-7 overflow-y-auto px-5 pb-32 sm:px-8">
+        <Panel label="Theme" icon={<Icon name="sparkles" size={12} />}>
+          <div className="space-y-3">
+            {Object.entries(THEMES).map(([group, themes]) => (
+              <div key={group}>
+                <div className="mb-2 font-mono text-[0.7rem] tracking-wide text-muted-foreground">{group}</div>
+                <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
+                  {themes.map(t => {
+                    const active = t === state.theme;
+                    return (
+                      <button key={t} onClick={() => update("theme", t)}
+                        className="flex-shrink-0 whitespace-nowrap rounded-full border-[1.5px] px-3.5 py-1.5 font-mono text-[0.72rem] tracking-wide transition-all"
+                        style={{
+                          borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
+                          background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.5)',
+                          color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+                          boxShadow: active ? '0 0 12px oklch(0.72 0.17 350 / 0.3)' : 'none',
+                        }}>
+                        {t.replace(/_/g, " ")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel label="Options" icon={<Icon name="layout-grid" size={12} />}>
+          <ToggleRow label="Show Icons" sub="Display stat icons on card" checked={state.showIcons} onChange={v => update("showIcons", v)} icon={<Icon name={state.showIcons ? "eye" : "eye-off"} size={14} />} />
+          <ToggleRow label="Compact Mode" sub="Smaller, condensed card layout" checked={state.compact} onChange={v => update("compact", v)} icon={<Icon name="layout-grid" size={14} />} />
+        </Panel>
+
+        <Panel label="Border Radius">
+          <div className="flex items-center gap-3">
+            <input type="range" min={0} max={28} value={state.borderRadius}
+              onChange={e => update("borderRadius", parseInt(e.target.value))}
+              className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
+            <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.borderRadius}</div>
+          </div>
+        </Panel>
+
+        <Panel label="Hide Stats" icon={<Icon name="eye-off" size={12} />}>
+          <div className="flex flex-wrap gap-2">
+            {HIDE_STATS.map(stat => {
+              const active = state.hidden.has(stat);
+              return (
+                <button key={stat} onClick={() => toggleHidden(stat)}
+                  className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
+                  style={{
+                    borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
+                    background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
+                    color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+                  }}>
+                  {stat}
+                </button>
+              );
+            })}
+          </div>
+        </Panel>
+
+        <Panel label="Embed Snippets" icon={<Icon name="code" size={12} />}>
+          <Snippet label="Direct URL" value={finalUrl} copied={copiedKey === "url"} onCopy={() => copy("url", finalUrl)} />
+          <Snippet label="Markdown" value={markdown} copied={copiedKey === "md"} onCopy={() => copy("md", markdown)} />
+          <Snippet label="HTML" value={html} copied={copiedKey === "html"} onCopy={() => copy("html", html)} />
+        </Panel>
+      </div>
+
+      <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-2xl -translate-x-1/2 border-t px-5 py-3 backdrop-blur-xl sm:px-8" style={{ borderColor: 'var(--border)', background: 'oklch(0.985 0.012 350 / 0.85)' }}>
+        <div className="flex gap-2">
+          <button onClick={() => copy("bar-url", finalUrl)}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border-[1.5px] bg-card/60 px-4 py-3 font-mono text-[0.78rem] font-medium text-foreground transition-all"
+            style={{ borderColor: copiedKey === "bar-url" ? 'var(--success)' : 'var(--border)', color: copiedKey === "bar-url" ? 'var(--success)' : 'var(--foreground)' }}>
+            <Icon name={copiedKey === "bar-url" ? "check" : "copy"} size={14} />
+            {copiedKey === "bar-url" ? "Copied!" : "Copy URL"}
+          </button>
+          <button onClick={() => copy("bar-md", markdown)}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-3 font-display text-[0.82rem] font-bold tracking-wide text-white transition-all hover:-translate-y-0.5"
+            style={{ background: "var(--gradient-sakura)", boxShadow: 'var(--shadow-petal)' }}>
+            <Icon name={copiedKey === "bar-md" ? "check" : "copy"} size={14} />
+            {copiedKey === "bar-md" ? "Copied!" : "Copy Markdown"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+const CREATORS = [
+  { name: "Anya", role: "Creator",
+    accent: "linear-gradient(135deg, oklch(0.78 0.16 320), oklch(0.7 0.2 350))",
+    img: "https://random-images-anya.vercel.app/anya",
+    github: "https://github.com/itz-Anya", githubLabel: "GitHub",
+    telegram: "https://t.me/SylveonLab", telegramLabel: "Telegram",
+    quote: "Creator" },
+  { name: "Murali", role: "Creator",
+    accent: "linear-gradient(135deg, oklch(0.78 0.16 350), oklch(0.72 0.18 25))",
+    img: "https://itz-murali-images.vercel.app/api",
+    github: "https://github.com/Itz-Murali", githubLabel: "GitHub",
+    telegram: "https://t.me/ChikuBots", telegramLabel: "Telegram ",
+    quote: "Pro Coder" },
+];
+
+function CreatorsSection() {
+  return (
+    <section className="relative px-5 pb-20 pt-14 sm:px-8">
+      <div className="mb-10 text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border bg-[color:var(--sakura-soft)]/60 px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.22em] backdrop-blur"
+          style={{ borderColor: 'oklch(0.78 0.14 350 / 0.4)', color: 'var(--sakura-deep)' }}>
+          <Icon name="sparkles" size={12} /> Made with love
+        </span>
+        <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          The <span className="gradient-text italic">Creators</span>
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">The duo behind the blossom.</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+        {CREATORS.map(c => (
+          <article key={c.name}
+            className="group relative overflow-hidden rounded-3xl border bg-card/70 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 sm:p-6"
+            style={{ borderColor: 'var(--border)', boxShadow: 'var(--shadow-soft)' }}>
+            <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: c.accent }} />
+            <div className="flex items-center gap-4">
+              <div className="relative h-16 w-16 flex-shrink-0 rounded-2xl p-[2px] sm:h-20 sm:w-20" style={{ background: c.accent }}>
+                <img src={c.img} alt={`${c.name} avatar`} loading="lazy"
+                  className="h-full w-full rounded-[14px] object-cover" style={{ background: 'var(--muted)' }}
+                  onError={e => { e.currentTarget.style.display = "none"; }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-display text-xl font-bold text-foreground sm:text-2xl">{c.name}</h3>
+                <p className="mt-0.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[0.7rem] font-medium"
+                  style={{ background: 'oklch(0.92 0.06 345 / 0.7)', color: 'var(--sakura-deep)' }}>✿ {c.role}</p>
+              </div>
+            </div>
+            <p className="mt-4 inline-flex items-center gap-1.5 text-sm italic" style={{ color: 'oklch(0.28 0.06 350 / 0.75)' }}>
+              <Icon name="quote" size={12} /> {c.quote}
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <a href={c.github} target="_blank" rel="noopener noreferrer" aria-label={c.githubLabel}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all"
+                style={{ borderColor: 'var(--border)' }}>
+                <GitHubIcon size={13} /> GitHub
+              </a>
+              <a href={c.telegram} target="_blank" rel="noopener noreferrer" aria-label={c.telegramLabel}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all"
+                style={{ borderColor: 'var(--border)' }}>
+                <Icon name="send" size={13} /> Telegram
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p className="mt-12 text-center font-mono text-[0.65rem] uppercase tracking-[0.25em] text-muted-foreground">
+        © {new Date().getFullYear()} GitHub Stats · 桜
+      </p>
+    </section>
+  );
+}
+
+
+function App() {
+  const [username, setUsername] = useState(null);
+  return (
+    <main className="relative mx-auto min-h-[100svh] w-full max-w-2xl">
+      {!username
+        ? <HeroStep onSubmit={setUsername} />
+        : <><CustomizeStep username={username} onChangeUser={() => setUsername(null)} /><CreatorsSection /></>}
+    </main>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+requestAnimationFrame(() => {
+  const sk = document.getElementById('boot-skeleton');
+  if (sk) sk.remove();
+});
+</script>
+</body>
+</html>
