@@ -14,5 +14,18 @@
         { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
       ]
     }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/stats.ts"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
   ]
 }
