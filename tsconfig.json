@@ -10,9 +10,8 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "outDir": ".vercel/output",
     "rootDir": "."
   },
   "include": ["api/**/*", "lib/**/*", "themes/**/*", "utils/**/*"],
   "exclude": ["node_modules"]
-} 
+}
