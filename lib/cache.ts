@@ -31,7 +31,6 @@ class InMemoryCache {
     return (this.store.get(key) as CacheEntry<unknown> | undefined)?.etag;
   }
 
-  // Cleanup expired entries (call periodically if needed)
   prune(): void {
     const now = Date.now();
     for (const [key, entry] of this.store.entries()) {
@@ -40,5 +39,4 @@ class InMemoryCache {
   }
 }
 
-// Module-level singleton (persists across warm invocations on Vercel)
 export const cache = new InMemoryCache(1800);
