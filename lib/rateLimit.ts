@@ -8,7 +8,7 @@ class RateLimiter {
   private readonly maxRequests: number;
   private readonly windowMs: number;
 
-  constructor(maxRequests = 60, windowSeconds = 60) {
+  constructor(maxRequests = 30, windowSeconds = 60) {
     this.maxRequests = maxRequests;
     this.windowMs = windowSeconds * 1000;
   }
@@ -16,14 +16,11 @@ class RateLimiter {
   isAllowed(ip: string): boolean {
     const now = Date.now();
     const record = this.records.get(ip);
-
     if (!record || now - record.windowStart > this.windowMs) {
       this.records.set(ip, { count: 1, windowStart: now });
       return true;
     }
-
     if (record.count >= this.maxRequests) return false;
-
     record.count++;
     return true;
   }
