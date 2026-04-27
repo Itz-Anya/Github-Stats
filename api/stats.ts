@@ -6,54 +6,61 @@ import { sanitizeUsername, sanitizeTheme, parseHideList, clamp } from "../utils/
 import { rateLimiter } from "../lib/rateLimit.js";
 
 function getClientIP(req: VercelRequest): string {
-  const forwarded = req.headers["x-forwarded-for"];
-  if (typeof forwarded === "string") return forwarded.split(",")[0].trim();
+  const fwd = req.headers["x-forwarded-for"];
+  if (typeof fwd === "string") return fwd.split(",")[0].trim();
   return req.socket?.remoteAddress ?? "unknown";
 }
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-): Promise<void> {
-  // Only allow GET
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.status(204).end();
+    return;
+  }
+
   if (req.method !== "GET") {
     res.status(405).end("Method Not Allowed");
     return;
   }
 
-  // Set SVG content type early
-  res.setHeader("Content-Type", "image/svg+xml");
-  res.setHeader("Cache-Control", "public, max-age=1800, stale-while-revalidate=86400");
+  res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  // Cache 30min, stale-while-revalidate 24h (important for GitHub README caching)
+  res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400");
+  // Disable X-Content-Type-Options sniffing so GitHub renders the SVG
+  res.setHeader("X-Content-Type-Options", "nosniff");
 
-  const ip = getClientIP(req);
-  const themeParam = sanitizeTheme(
-    typeof req.query["theme"] === "string" ? req.query["theme"] : "dark"
-  );
-  const validTheme = THEME_NAMES.includes(themeParam) ? themeParam : "dark";
+  // Theme + border radius (resolve early so error cards use correct theme)
+  const themeRaw = typeof req.query["theme"] === "string" ? req.query["theme"] : "dark";
+  const themeName = THEME_NAMES.includes(sanitizeTheme(themeRaw))
+    ? sanitizeTheme(themeRaw)
+    : "dark";
 
-  const borderRadiusParam = req.query["border_radius"];
-  const borderRadiusOverride =
-    typeof borderRadiusParam === "string"
-      ? clamp(parseInt(borderRadiusParam, 10) || 10, 0, 24)
+  const brRaw = req.query["border_radius"];
+  const brOverride =
+    typeof brRaw === "string" && brRaw !== ""
+      ? clamp(parseInt(brRaw, 10) || 10, 0, 28)
       : undefined;
 
-  const theme = getTheme(validTheme, borderRadiusOverride);
-  const borderRadius = theme.borderRadius;
+  const theme = getTheme(themeName, brOverride);
+  const br = theme.borderRadius;
 
-  function sendError(message: string, status = 200): void {
-    res.status(status).send(renderErrorCard(message, theme, borderRadius));
+  function sendError(msg: string): void {
+    res.status(200).send(renderErrorCard(msg, theme, br));
   }
 
-  // Rate limiting
+  // Rate limit
+  const ip = getClientIP(req);
   if (!rateLimiter.isAllowed(ip)) {
-    sendError("Rate limit exceeded. Please try again in a minute.");
+    sendError("Rate limit exceeded — please wait a minute and try again.");
     return;
   }
 
   // Validate username
   const rawUsername = req.query["username"];
-  if (!rawUsername || typeof rawUsername !== "string") {
-    sendError("Missing required query param: ?username=<github_username>");
+  if (!rawUsername || typeof rawUsername !== "string" || rawUsername.trim() === "") {
+    sendError("Missing required parameter: ?username=<github_username>");
     return;
   }
 
@@ -61,23 +68,21 @@ export default async function handler(
   try {
     username = sanitizeUsername(rawUsername);
   } catch {
-    sendError("Invalid GitHub username format.");
+    sendError("Invalid GitHub username format (only a-z, 0-9, and hyphens allowed).");
     return;
   }
 
-  // Parse options
+  // Options
   const hideRaw = typeof req.query["hide"] === "string" ? req.query["hide"] : "";
   const hideStats = parseHideList(hideRaw);
 
   const showIconsRaw = req.query["show_icons"];
-  const showIcons = showIconsRaw !== "false"; // default true
+  const showIcons = showIconsRaw !== "false" && showIconsRaw !== "0";
 
   const compactRaw = req.query["compact"];
   const compact = compactRaw === "true" || compactRaw === "1";
 
-  const hasToken = Boolean(process.env.GITHUB_TOKEN);
-
-  // Fetch data
+  // Fetch
   try {
     const user = await fetchGitHubUser(username);
 
@@ -86,24 +91,23 @@ export default async function handler(
       hideStats,
       showIcons,
       compact,
-      borderRadius,
-      hasToken,
+      borderRadius: br,
     });
 
     res.status(200).send(svg);
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
+    const msg = err instanceof Error ? err.message : String(err);
 
-    if (message === "USER_NOT_FOUND") {
+    if (msg === "USER_NOT_FOUND") {
       sendError(`GitHub user "${username}" not found.`);
-    } else if (message === "RATE_LIMITED") {
+    } else if (msg === "RATE_LIMITED") {
       res.setHeader("Cache-Control", "no-store");
-      sendError("GitHub API rate limit reached. Add GITHUB_TOKEN to increase limits.");
-    } else if (message === "INVALID_USERNAME") {
+      sendError("GitHub API rate limit reached. Set GITHUB_TOKEN env var to increase limits.");
+    } else if (msg === "INVALID_USERNAME") {
       sendError("Invalid GitHub username.");
     } else {
-      console.error("[github-stats] Unexpected error:", message);
-      sendError("Unexpected error fetching GitHub data. Please try again.");
+      console.error("[github-stats] error:", msg);
+      sendError("Unexpected error fetching GitHub data. Please try again shortly.");
     }
   }
 }
