@@ -1,15 +1,13 @@
 {
   "name": "github-stats-service",
-  "version": "1.0.0",
-  "description": "Dynamic GitHub stats SVG cards, deployable on Vercel",
+  "version": "2.0.0",
+  "description": "Dynamic GitHub stats SVG cards — deployable on Vercel",
   "private": true,
   "scripts": {
     "dev": "vercel dev",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "node-fetch": "^3.3.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@vercel/node": "^3.0.0",
