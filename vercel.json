@@ -2,16 +2,16 @@
   "version": 2,
   "functions": {
     "api/stats.ts": {
-      "memory": 256,
-      "maxDuration": 10
+      "memory": 512,
+      "maxDuration": 15
     }
   },
   "headers": [
     {
-      "source": "/api/stats",
+      "source": "/api/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=1800, stale-while-revalidate=86400" },
-        { "key": "Content-Type", "value": "image/svg+xml" }
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" }
       ]
     }
   ]
