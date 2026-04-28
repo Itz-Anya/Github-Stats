@@ -273,18 +273,14 @@ if (user.bio && !compact) {
     headerSvg += `
       <text x="${nameX}" y="${nameY + 42 + (i * 14)}"
         font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-        font-size="17"
+        font-size="13"
         fill="${theme.subTextColor}"
       >${escapeXml(line)}</text>
     `;
   });
 }
 
-  // badges: hireable, account age, joined
   
-  // ── Metadata row (company, location, website) — full mode only
-  
-  // ── Dividers
   const divider = (y: number) =>
     `<line x1="${P}" y1="${y}" x2="${W - P}" y2="${y}" stroke="${theme.border}" stroke-width="1" opacity="0.6"/>`;
 
