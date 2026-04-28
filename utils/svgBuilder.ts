@@ -420,7 +420,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   ${cardBg}
   ${avatarSvg}
   ${headerSvg}
-  ${metaSvg}
   ${divider(DIVIDER1_Y)}
   ${statsSvg}
   ${hasLangs ? divider(DIVIDER2_Y) : ""}
