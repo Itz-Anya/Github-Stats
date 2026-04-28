@@ -256,22 +256,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   }
 
   // badges: hireable, account age, joined
-  const badges: string[] = [];
-  if (user.hireable) badges.push("✦ Open to work");
-  badges.push(`Joined ${formatDate(user.createdAt)}`);
-  if (user.location) badges.push(`📍 ${truncate(user.location, 20)}`);
-
-  let badgeY = nameY + (compact ? 36 : (user.bio ? 60 : 44));
-  for (const badge of badges.slice(0, compact ? 1 : 2)) {
-    headerSvg += `
-      <text x="${nameX}" y="${badgeY}"
-        font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-        font-size="10" fill="${theme.subTextColor}"
-      >${escapeXml(badge)}</text>
-    `;
-    badgeY += 14;
-  }
-
+  
   // ── Metadata row (company, location, website) — full mode only
   
   // ── Dividers
