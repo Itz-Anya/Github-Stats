@@ -77,9 +77,7 @@ function buildStatRows(user: GitHubUser): StatRow[] {
     { key: "followers", label: "Followers",         value: formatNumber(user.followers),            iconName: "followers"},
     { key: "following", label: "Following",         value: formatNumber(user.following),            iconName: "followers"},
     { key: "gists",     label: "Public Gists",      value: formatNumber(user.publicGists),          iconName: "gist"     },
-    { key: "watchers",  label: "Watchers",          value: formatNumber(user.totalWatchers),        iconName: "watcher"  },
-    { key: "streak",    label: "Longest Streak",    value: `${user.longestStreak}d`,               iconName: "streak"   },
-    { key: "curstreak", label: "Current Streak",    value: `${user.currentStreak}d`,               iconName: "streak"   },
+    { key: "watchers",  label: "Watchers",          value: formatNumber(user.totalWatchers),        iconName: "watcher"  }
   ];
 }
 
@@ -275,19 +273,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   }
 
   // ── Metadata row (company, location, website) — full mode only
-  let metaSvg = "";
-  if (!compact) {
-    const metaItems = buildMetaLines(user);
-    metaItems.forEach((item, i) => {
-      metaSvg += `
-        <text x="${P + 18}" y="${HEADER_H + 4 + i * 18 + 12}"
-          font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-          font-size="11" fill="${theme.subTextColor}"
-        >${escapeXml(item)}</text>
-      `;
-    });
-  }
-
+  
   // ── Dividers
   const divider = (y: number) =>
     `<line x1="${P}" y1="${y}" x2="${W - P}" y2="${y}" stroke="${theme.border}" stroke-width="1" opacity="0.6"/>`;
