@@ -32,6 +32,7 @@
 <link rel="shortcut icon" href="s.png" />
 <meta property="og:image" content="s.png" />
 <meta name="twitter:image" content="s.png" />
+<link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" />
@@ -198,12 +199,276 @@ html, body {
 }
 
 
-#root:not(:empty) + #boot-skeleton { display: none; }
-#boot-skeleton { animation: float-in 0.5s ease-out both; }
+/* ── About icon button ── */
+.about-btn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 9000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid oklch(0.78 0.14 350 / 0.45);
+  background: oklch(1 0.005 340 / 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px -4px oklch(0.72 0.17 350 / 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  color: var(--sakura-deep);
+}
+.about-btn:hover {
+  transform: scale(1.1);
+  background: oklch(0.96 0.04 345 / 0.9);
+  box-shadow: 0 6px 22px -4px oklch(0.72 0.17 350 / 0.38);
+}
+.about-btn i { font-size: 20px; line-height: 1; }
+
+/* ── Overlay backdrop ── */
+.about-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: oklch(0.28 0.06 350 / 0.30);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.about-overlay-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Overlay card ── */
+.about-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(160deg, oklch(0.99 0.012 340), oklch(0.97 0.025 350) 60%, oklch(0.95 0.04 355));
+  border: 1.5px solid oklch(0.88 0.09 345 / 0.7);
+  border-radius: 28px;
+  box-shadow:
+    0 30px 80px -20px oklch(0.72 0.17 350 / 0.35),
+    0 0 0 1px oklch(0.88 0.09 345 / 0.4) inset,
+    inset 0 1px 0 oklch(1 0 0 / 0.7);
+  padding: 28px 26px 30px;
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.32s cubic-bezier(0.16,1,0.3,1);
+  overflow: hidden;
+}
+.about-overlay-backdrop.open .about-card {
+  transform: translateY(0) scale(1);
+}
+
+/* decorative blobs */
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.88 0.12 340 / 0.55), transparent 70%);
+  pointer-events: none;
+}
+.about-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.9 0.10 355 / 0.40), transparent 70%);
+  pointer-events: none;
+}
+
+/* close button */
+.about-close {
+  position: absolute;
+  top: 14px; left: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid oklch(0.88 0.09 345 / 0.6);
+  background: oklch(0.97 0.02 345 / 0.7);
+  display: grid; place-items: center;
+  cursor: pointer;
+  color: var(--sakura-deep);
+  font-size: 18px;
+  transition: background 0.18s, transform 0.18s;
+  z-index: 1;
+}
+.about-close:hover { background: oklch(0.93 0.06 345); transform: scale(1.1); }
+
+/* logo image */
+.about-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 18px;
+}
+.about-logo-wrap img {
+  width: 80px; height: 80px;
+  border-radius: 22px;
+  border: 2px solid oklch(0.88 0.09 345 / 0.5);
+  box-shadow: 0 8px 28px -8px oklch(0.72 0.17 350 / 0.40);
+  object-fit: cover;
+}
+
+/* text */
+.about-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: oklch(0.92 0.07 345 / 0.55);
+  border: 1px solid oklch(0.85 0.10 345 / 0.5);
+  color: var(--sakura-deep);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+.about-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.about-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.83rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+.about-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.about-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: oklch(0.94 0.05 345 / 0.6);
+  color: var(--sakura-deep);
+  border: 1px solid oklch(0.88 0.09 345 / 0.5);
+}
+.about-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, oklch(0.88 0.09 345 / 0.5), transparent);
+  margin-bottom: 18px;
+}
+
+/* github button */
+.about-gh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, oklch(0.72 0.17 355), oklch(0.66 0.20 350));
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 6px 20px -6px oklch(0.72 0.17 350 / 0.5);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.about-gh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px -6px oklch(0.72 0.17 350 / 0.55);
+}
+
+/* floating petals inside overlay */
+@keyframes about-petal {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+  100% { transform: translateY(-60px) rotate(180deg); opacity: 0; }
+}
+.about-float-petal {
+  position: absolute;
+  pointer-events: none;
+  font-size: 14px;
+  animation: about-petal 3.5s ease-in-out infinite;
+}
+
 </style>
 </head>
 <body>
 <div id="root"></div>
+
+<!-- About icon button -->
+<button class="about-btn" id="aboutBtn" aria-label="About this app" title="About">
+  <i class='bx bx-info-circle'></i>
+</button>
+
+<!-- About overlay -->
+<div class="about-overlay-backdrop" id="aboutOverlay" role="dialog" aria-modal="true" aria-label="About GitHub Stats Generator">
+  <div class="about-card">
+    <!-- floating petals decoration -->
+    <span class="about-float-petal" style="bottom:20px;right:30px;animation-delay:0s;color:oklch(0.78 0.14 350)">✿</span>
+    <span class="about-float-petal" style="bottom:60px;right:70px;animation-delay:1.2s;color:oklch(0.82 0.13 345)">❀</span>
+    <span class="about-float-petal" style="bottom:10px;right:100px;animation-delay:2.4s;color:oklch(0.85 0.11 25)">✾</span>
+
+    <!-- close button (top left) -->
+    <button class="about-close" id="aboutClose" aria-label="Close">
+      <i class='bx bx-x'></i>
+    </button>
+
+    <!-- logo -->
+    <div class="about-logo-wrap">
+      <img src="s.png" alt="GitHub Stats logo" onerror="this.style.background='oklch(0.92 0.06 345)';this.src=''" />
+    </div>
+
+    <!-- content -->
+    <div style="text-align:center;">
+      <div class="about-tag" style="margin:0 auto 10px;">
+        <i class='bx bx-leaf' style="font-size:10px;"></i> Open Source
+      </div>
+      <div class="about-title">GitHub Stats<br/><span style="background:linear-gradient(135deg,oklch(0.7 0.2 355),oklch(0.78 0.16 25),oklch(0.72 0.17 320));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Generator</span></div>
+      <p class="about-desc" style="margin-top:10px;">
+        A beautiful, multi-themed GitHub stats card generator. Craft your blossoming dev identity card with custom themes, toggles &amp; instant markdown — ready for your README in seconds. 🌸
+      </p>
+
+      <div class="about-pills">
+        <span class="about-pill"><i class='bx bx-palette' style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>20+ Themes</span>
+        <span class="about-pill"><i class='bx bx-code-alt' style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>Markdown Ready</span>
+        <span class="about-pill"><i class='bx bx-infinite' style="font-size:10px;vertical-align:middle;margin-right:3px;"></i>Free Forever</span>
+
+      </div>
+
+      <div class="about-divider"></div>
+
+      <a class="about-gh-btn" href="https://github.com/Itz-Anya/Github-Stats" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        View Source Code on GitHub
+      </a>
+
+      <p style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted-foreground);">
+        ✿ Made by SylveonLab ✿
+      </p>
+    </div>
+  </div>
+</div>
 
 
 
@@ -713,5 +978,18 @@ requestAnimationFrame(() => {
   if (sk) sk.remove();
 });
 </script>
+<script>
+(function() {
+  var btn = document.getElementById('aboutBtn');
+  var overlay = document.getElementById('aboutOverlay');
+  var closeBtn = document.getElementById('aboutClose');
+  function open() { overlay.classList.add('open'); document.body.style.overflow='hidden'; }
+  function close() { overlay.classList.remove('open'); document.body.style.overflow=''; }
+  btn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
+})();
+</script>
 </body>
-</html>
+
