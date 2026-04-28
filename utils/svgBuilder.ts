@@ -267,7 +267,7 @@ let headerSvg = `
 `;
 
 if (user.bio && !compact) {
-  const bioLines = wrapText(user.bio, 100); 
+  const bioLines = wrapText(user.bio, 70); 
 
   bioLines.forEach((line, i) => {
     headerSvg += `
