@@ -229,31 +229,56 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   `;
 
   // ── Header text
-  const nameX = P + AVATAR_SIZE + 16;
-  const displayName = truncate(user.name ?? user.login, compact ? 22 : 26);
-  const nameY = P + (compact ? 22 : 26);
+  function wrapText(text, maxCharsPerLine) {
+  const words = text.split(" ");
+  let lines = [];
+  let currentLine = "";
 
-  let headerSvg = `
-    <text x="${nameX}" y="${nameY}"
-      font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-      font-size="${compact ? 17 : 21}" font-weight="700"
-      fill="${theme.titleColor}"
-    >${escapeXml(displayName)}</text>
-    <text x="${nameX}" y="${nameY + (compact ? 18 : 22)}"
-      font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-      font-size="${compact ? 11 : 13}"
-      fill="${theme.accentColor}"
-    >@${escapeXml(user.login)}</text>
-  `;
-
-  if (user.bio && !compact) {
-    headerSvg += `
-      <text x="${nameX}" y="${nameY + 42}"
-        font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-        font-size="11" fill="${theme.subTextColor}"
-      >${escapeXml(truncate(user.bio, 46))}</text>
-    `;
+  for (let word of words) {
+    if ((currentLine + word).length <= maxCharsPerLine) {
+      currentLine += (currentLine ? " " : "") + word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
   }
+
+  if (currentLine) lines.push(currentLine);
+
+  return lines;
+}
+
+const nameX = P + AVATAR_SIZE + 16;
+const displayName = truncate(user.name ?? user.login, compact ? 22 : 26);
+const nameY = P + (compact ? 22 : 26);
+
+let headerSvg = `
+  <text x="${nameX}" y="${nameY}"
+    font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+    font-size="${compact ? 17 : 21}" font-weight="700"
+    fill="${theme.titleColor}"
+  >${escapeXml(displayName)}</text>
+
+  <text x="${nameX}" y="${nameY + (compact ? 18 : 22)}"
+    font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+    font-size="${compact ? 11 : 13}"
+    fill="${theme.accentColor}"
+  >@${escapeXml(user.login)}</text>
+`;
+
+if (user.bio && !compact) {
+  const bioLines = wrapText(user.bio, 100); 
+
+  bioLines.forEach((line, i) => {
+    headerSvg += `
+      <text x="${nameX}" y="${nameY + 42 + (i * 14)}"
+        font-family="system-ui,-apple-system,Segoe UI,sans-serif"
+        font-size="11"
+        fill="${theme.subTextColor}"
+      >${escapeXml(line)}</text>
+    `;
+  });
+}
 
   // badges: hireable, account age, joined
   
