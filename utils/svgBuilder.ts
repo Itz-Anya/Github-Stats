@@ -273,7 +273,7 @@ if (user.bio && !compact) {
     headerSvg += `
       <text x="${nameX}" y="${nameY + 42 + (i * 14)}"
         font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-        font-size="11"
+        font-size="17"
         fill="${theme.subTextColor}"
       >${escapeXml(line)}</text>
     `;
