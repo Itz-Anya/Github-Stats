@@ -448,24 +448,76 @@ function buildMetaLines(user: GitHubUser): string[] {
 
 export function renderErrorCard(message: string, theme: Theme, br: number): string {
   const W = 460;
-  const H = 110;
+  const H = 120;
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${theme.background}"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+
+    <!-- Glow -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#f85149" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Subtle Noise Pattern -->
+    <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.6" fill="white" opacity="0.05"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}"
     rx="${br}" ry="${br}"
-    fill="${theme.background}" stroke="#f85149" stroke-width="1.5"/>
-  <rect x="0" y="${H - 3}" width="${W}" height="3" rx="${Math.min(br, 3)}" fill="#f85149" opacity="0.7"/>
-  <text x="20" y="36"
+    fill="url(#bgGrad)"
+    stroke="#f85149"
+    stroke-width="1.2"/>
+
+  <!-- Noise Overlay -->
+  <rect x="0" y="0" width="${W}" height="${H}" fill="url(#dots)" rx="${br}" opacity="0.4"/>
+
+  <!-- Left Accent Bar -->
+  <rect x="0" y="0" width="6" height="${H}" fill="#f85149" rx="${br}" filter="url(#glow)"/>
+
+  <!-- Icon Bubble -->
+  <circle cx="32" cy="40" r="14" fill="#f85149" opacity="0.15"/>
+  <text x="32" y="45"
+    text-anchor="middle"
+    font-size="14"
+    font-family="system-ui"
+    fill="#f85149">⚠</text>
+
+  <!-- Title -->
+  <text x="55" y="38"
     font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-    font-size="15" font-weight="700" fill="#f85149"
-  >⚠ GitHub Stats — Error</text>
-  <text x="20" y="60"
+    font-size="15"
+    font-weight="700"
+    fill="#f85149"
+  >GitHub Stats — Error</text>
+
+  <!-- Message -->
+  <text x="20" y="68"
     font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-    font-size="12" fill="${theme.subTextColor}"
+    font-size="12.5"
+    fill="${theme.subTextColor}"
   >${escapeXml(message)}</text>
-  <text x="20" y="82"
+
+  <!-- Bottom Divider -->
+  <line x1="20" y1="82" x2="${W - 20}" y2="82"
+    stroke="${theme.subTextColor}" opacity="0.1"/>
+
+  <!-- Footer -->
+  <text x="20" y="100"
     font-family="system-ui,-apple-system,Segoe UI,sans-serif"
-    font-size="10" fill="${theme.subTextColor}" opacity="0.5"
+    font-size="10"
+    fill="${theme.subTextColor}"
+    opacity="0.55"
   >github-stats-service v2 · add GITHUB_TOKEN for full stats</text>
+
 </svg>`;
 }
