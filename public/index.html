@@ -551,6 +551,9 @@ function buildStatsUrl(s) {
   if (s.compact) p.set("compact", "true");
   if (s.borderRadius !== 10) p.set("border_radius", String(s.borderRadius));
   if (s.hidden.size) p.set("hide", [...s.hidden].join(","));
+  if (s.hideAvatarRing) p.set("hide_avatar_ring", "true");
+  if (s.hideStreakEmoji) p.set("hide_streak_emoji", "true");
+  if (s.sectionSpacing !== 0) p.set("section_spacing", String(s.sectionSpacing));
   return `${BASE}?${p.toString()}`;
 }
 
@@ -726,10 +729,12 @@ function Snippet({ label, value, copied, onCopy }) {
 function CustomizeStep({ username, onChangeUser }) {
   const [state, setState] = useState({
     username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
+    hideAvatarRing: false, hideStreakEmoji: false, sectionSpacing: 0,
   });
   const [status, setStatus] = useState("loading");
   const [previewUrl, setPreviewUrl] = useState(() => buildStatsUrl({
     username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
+    hideAvatarRing: false, hideStreakEmoji: false, sectionSpacing: 0,
   }));
   const [copiedKey, setCopiedKey] = useState(null);
   const debounceRef = useRef(null);
@@ -824,6 +829,17 @@ function CustomizeStep({ username, onChangeUser }) {
         <Panel label="Options" icon={<Icon name="layout-grid" size={12} />}>
           <ToggleRow label="Show Icons" sub="Display stat icons on card" checked={state.showIcons} onChange={v => update("showIcons", v)} icon={<Icon name={state.showIcons ? "eye" : "eye-off"} size={14} />} />
           <ToggleRow label="Compact Mode" sub="Smaller, condensed card layout" checked={state.compact} onChange={v => update("compact", v)} icon={<Icon name="layout-grid" size={14} />} />
+          <ToggleRow label="Hide Avatar Ring" sub="Remove the animated ring around avatar" checked={state.hideAvatarRing} onChange={v => update("hideAvatarRing", v)} icon={<Icon name={state.hideAvatarRing ? "eye-off" : "eye"} size={14} />} />
+          <ToggleRow label="Hide Streak Emoji" sub="Remove fire emoji from streak section" checked={state.hideStreakEmoji} onChange={v => update("hideStreakEmoji", v)} icon={<Icon name={state.hideStreakEmoji ? "eye-off" : "eye"} size={14} />} />
+        </Panel>
+
+        <Panel label="Section Spacing">
+          <div className="flex items-center gap-3">
+            <input type="range" min={0} max={40} value={state.sectionSpacing}
+              onChange={e => update("sectionSpacing", parseInt(e.target.value))}
+              className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
+            <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.sectionSpacing}px</div>
+          </div>
         </Panel>
 
         <Panel label="Border Radius">
