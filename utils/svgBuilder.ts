@@ -10,6 +10,9 @@ export interface RenderOptions {
   showIcons: boolean;
   compact: boolean;
   borderRadius: number;
+  hideAvatarRing?: boolean;
+  hideStreakEmoji?: boolean;
+  sectionSpacing?: number;   // extra px between lang/streak/pinned sections (default 0)
 }
 
 // ─── SVG Octicon paths ────────────────────────────────────────────────────────
@@ -270,10 +273,8 @@ function accountAgeBadge(
 function buildMetaLines(user: GitHubUser): string[] {
   const lines: string[] = [];
   if (user.company)         lines.push(`🏢 ${truncate(user.company.replace(/^@/, ""), 30)}`);
-  if (user.location)        lines.push(`📍 ${truncate(user.location, 30)}`);
-  if (user.blog)            lines.push(`🔗 ${truncate(user.blog.replace(/^https?:\/\//, ""), 35)}`);
   if (user.twitterUsername) lines.push(`𝕏 @${user.twitterUsername}`);
-  return lines.slice(0, 3);
+  return lines.slice(0, 2);
 }
 
 function wrapText(text: string, maxChars: number): string[] {
@@ -340,7 +341,7 @@ function renderPinnedRepos(
 // ─── Main card ────────────────────────────────────────────────────────────────
 
 export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
-  const { theme, hideStats, showIcons, compact } = opts;
+  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, sectionSpacing = 0 } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
   const AV = compact ? 56 : 72;  // avatar size
@@ -378,11 +379,11 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   const hasLangs  = user.topLanguages.length > 0 && !hideStats.has("languages");
   const langRows  = Math.ceil(user.topLanguages.length / 4);
-  const LANG_H    = hasLangs ? (12 + 12 + langRows * 20 + 22) : 0;
+  const LANG_H    = hasLangs ? (12 + 12 + langRows * 20 + 22 + sectionSpacing) : 0;
   const DIV3_Y    = DIV2_Y + LANG_H;
 
   const hasStreak  = user.hasToken && !hideStats.has("streakinfo");
-  const STREAK_H   = hasStreak ? 66 : 0;
+  const STREAK_H   = hasStreak ? (66 + sectionSpacing) : 0;
   const DIV4_Y     = DIV3_Y + STREAK_H;
 
   const hasPinned  = !hideStats.has("pinned") && !!user.pinnedRepos?.length;
@@ -430,7 +431,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   // ── Avatar
   const ACX = P + AV/2, ACY = P + AV/2, AR = AV/2;
-  const circ = 2 * Math.PI * (AR + 4);
   const avatarSrc = user.avatarBase64 ?? `${user.avatarUrl}?s=128`;
 
   const avatarSvg = `
@@ -438,13 +438,11 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     <image href="${avatarSrc}" x="${P}" y="${P}" width="${AV}" height="${AV}"
       clip-path="url(#${avatarClipId})" preserveAspectRatio="xMidYMid slice"/>
     <circle cx="${ACX}" cy="${ACY}" r="${AR + 0.5}" fill="none" stroke="white" stroke-width="1.5" opacity="0.07"/>
-    <circle cx="${ACX}" cy="${ACY}" r="${AR + 4}"
+    ${!hideAvatarRing ? `<circle cx="${ACX}" cy="${ACY}" r="${AR + 4}"
       fill="none" stroke="url(#${ringGradId})" stroke-width="2.5"
-      stroke-dasharray="${(circ*0.72).toFixed(1)} ${(circ*0.28).toFixed(1)}"
       stroke-linecap="round"
       class="avatar-ring"
-      transform="rotate(-50 ${ACX} ${ACY})"
-    />
+    />` : ""}
   `;
 
   // ── Header
@@ -472,17 +470,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   if (!compact && user.accountAgeDays > 0) {
     headerSvg += accountAgeBadge(W - P - 70, P + 3, user.accountAgeDays, theme.accentColor, theme.badgeBg, theme.border);
-  }
-
-  if (user.hireable && !compact) {
-    const hireY = nameY + 34 + bioLines.length * 14 + 6;
-    headerSvg += `
-      <rect x="${nameX}" y="${hireY}" width="56" height="15" rx="7.5"
-        fill="${theme.accentColor}" opacity="0.15" stroke="${theme.accentColor}" stroke-width="0.8"/>
-      <text x="${nameX + 28}" y="${hireY + 10.5}" text-anchor="middle"
-        font-family="system-ui,sans-serif" font-size="8" font-weight="700"
-        fill="${theme.accentColor}">FOR HIRE</text>
-    `;
   }
 
   headerSvg += `</g>`;
@@ -536,7 +523,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
             fill="${theme.statValueColor}" text-anchor="end"
           >${escapeXml(stat.value)}</text>
           ${!compact && num > 0
-            ? buildSparkline(num, maxVal, valX-46, sy-2, 40, 13, theme.accentColor+"80", theme.accentColor, spId)
+            ? buildSparkline(num, maxVal, valX-58, sy-2, 40, 13, theme.accentColor+"80", theme.accentColor, spId)
             : ""}
           <line x1="${sx}" y1="${sy+14}" x2="${sx+colW-10}" y2="${sy+14}"
             stroke="${theme.border}" stroke-width="0.4" opacity="0.3"/>
@@ -603,7 +590,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
         <text x="${x+thirdW/2}" y="${SY+36}" text-anchor="middle"
           font-family="'SF Mono',ui-monospace,monospace" font-size="14" font-weight="800"
           fill="${theme.accentColor}">${escapeXml(val)}</text>
-        ${hot ? `<text x="${x+thirdW/2+30}" y="${SY+35}" font-size="12" text-anchor="middle">🔥</text>` : ""}
       `;
     };
 
