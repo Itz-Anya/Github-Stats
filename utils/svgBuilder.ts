@@ -12,6 +12,7 @@ export interface RenderOptions {
   borderRadius: number;
   hideAvatarRing?: boolean;
   hideStreakEmoji?: boolean;
+  hideStatCharts?: boolean;  // hide the mini sparkline charts in stats grid
   sectionSpacing?: number;   // extra px between lang/streak/pinned sections (default 0)
 }
 
@@ -341,7 +342,7 @@ function renderPinnedRepos(
 // ─── Main card ────────────────────────────────────────────────────────────────
 
 export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
-  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, sectionSpacing = 0 } = opts;
+  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, hideStatCharts = false, sectionSpacing = 0 } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
   const AV = compact ? 56 : 72;  // avatar size
@@ -374,16 +375,21 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const HEADER_H       = AV + P * 2;
   const META_H         = compact ? 0 : (metaLines.length * 16 + bioLines.length * 14 + (metaLines.length || bioLines.length ? 12 : 0));
   const DIV1_Y         = HEADER_H + META_H + 4;
-  const STATS_H        = statRowCnt * STAT_ROW_H + 30;
-  const DIV2_Y         = DIV1_Y + STATS_H;
+
+  const hasStats = !hideStats.has("stats");
+  const STATS_H  = hasStats ? (statRowCnt * STAT_ROW_H + 30) : 0;
+  const DIV2_Y   = DIV1_Y + STATS_H;
+
+  // Base inter-section gap (16px) + user-supplied sectionSpacing
+  const GAP = 16 + sectionSpacing;
 
   const hasLangs  = user.topLanguages.length > 0 && !hideStats.has("languages");
   const langRows  = Math.ceil(user.topLanguages.length / 4);
-  const LANG_H    = hasLangs ? (12 + 12 + langRows * 20 + 22 + sectionSpacing) : 0;
+  const LANG_H    = hasLangs ? (12 + 12 + langRows * 20 + 22 + GAP) : 0;
   const DIV3_Y    = DIV2_Y + LANG_H;
 
   const hasStreak  = user.hasToken && !hideStats.has("streakinfo");
-  const STREAK_H   = hasStreak ? (66 + sectionSpacing) : 0;
+  const STREAK_H   = hasStreak ? (66 + GAP) : 0;
   const DIV4_Y     = DIV3_Y + STREAK_H;
 
   const hasPinned  = !hideStats.has("pinned") && !!user.pinnedRepos?.length;
@@ -469,7 +475,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   });
 
   if (!compact && user.accountAgeDays > 0) {
-    headerSvg += accountAgeBadge(W - P - 70, P + 3, user.accountAgeDays, theme.accentColor, theme.badgeBg, theme.border);
+    // account age badge removed
   }
 
   headerSvg += `</g>`;
@@ -487,7 +493,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   }
 
   // ── Dividers
-  const div1 = fancyDivider(P, DIV1_Y, W-P*2, uid("d1"), theme.accentColor, theme.border);
+  const div1 = hasStats  ? fancyDivider(P, DIV1_Y, W-P*2, uid("d1"), theme.accentColor, theme.border) : "";
   const div2 = hasLangs  ? fancyDivider(P, DIV2_Y, W-P*2, uid("d2"), theme.accentColor, theme.border) : "";
   const div3 = hasStreak ? fancyDivider(P, DIV3_Y, W-P*2, uid("d3"), theme.accentColor, theme.border) : "";
   const div4 = hasPinned ? fancyDivider(P, DIV4_Y, W-P*2, uid("d4"), theme.accentColor, theme.border) : "";
@@ -498,7 +504,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const maxVal   = Math.max(user.totalCommits, user.totalStars, user.publicRepos, user.followers, 1);
 
   let statsSvg = "";
-  if (!hideStats.has("stats")) {
+  if (hasStats) {
     statsSvg += sectionHeading(P, STATS_Y - 6, "GITHUB STATS", theme.accentColor, theme.subTextColor, W - P*2);
 
     allStats.forEach((stat, i) => {
@@ -522,7 +528,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
             font-size="${compact ? 11 : 12}" font-weight="700"
             fill="${theme.statValueColor}" text-anchor="end"
           >${escapeXml(stat.value)}</text>
-          ${!compact && num > 0
+          ${!compact && !hideStatCharts && num > 0
             ? buildSparkline(num, maxVal, valX-58, sy-2, 40, 13, theme.accentColor+"80", theme.accentColor, spId)
             : ""}
           <line x1="${sx}" y1="${sy+14}" x2="${sx+colW-10}" y2="${sy+14}"
