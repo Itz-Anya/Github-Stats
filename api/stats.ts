@@ -82,6 +82,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const compactRaw = req.query["compact"];
   const compact = compactRaw === "true" || compactRaw === "1";
 
+  const hideAvatarRingRaw = req.query["hide_avatar_ring"];
+  const hideAvatarRing = hideAvatarRingRaw === "true" || hideAvatarRingRaw === "1";
+
+  const hideStreakEmojiRaw = req.query["hide_streak_emoji"];
+  const hideStreakEmoji = hideStreakEmojiRaw === "true" || hideStreakEmojiRaw === "1";
+
+  const hideStatChartsRaw = req.query["hide_stat_charts"];
+  const hideStatCharts = hideStatChartsRaw === "true" || hideStatChartsRaw === "1";
+
+  const sectionSpacingRaw = req.query["section_spacing"];
+  const sectionSpacing = typeof sectionSpacingRaw === "string" && sectionSpacingRaw !== ""
+    ? clamp(parseInt(sectionSpacingRaw, 10) || 0, 0, 40)
+    : 0;
+
   // Fetch
   try {
     const user = await fetchGitHubUser(username);
@@ -92,6 +106,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       showIcons,
       compact,
       borderRadius: br,
+      hideAvatarRing,
+      hideStreakEmoji,
+      hideStatCharts,
+      sectionSpacing,
     });
 
     res.status(200).send(svg);
