@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -542,6 +543,7 @@ const THEMES = {
   "🌸 Pastel": ["sakura","rose_gold","lavender","cotton_candy","mint_fresh","peach_blossom","bubblegum","sunshine","ocean_breeze","cherry_blossom"],
 };
 const HIDE_STATS = ["repos","stars","forks","commits","prs","issues","reviews","followers","following","gists","watchers"];
+const HIDE_SECTIONS = ["stats","languages","streakinfo","pinned"];
 
 function buildStatsUrl(s) {
   const p = new URLSearchParams();
@@ -550,9 +552,12 @@ function buildStatsUrl(s) {
   if (!s.showIcons) p.set("show_icons", "false");
   if (s.compact) p.set("compact", "true");
   if (s.borderRadius !== 10) p.set("border_radius", String(s.borderRadius));
-  if (s.hidden.size) p.set("hide", [...s.hidden].join(","));
+  // Merge individual stat hides + whole-section hides into one ?hide= param
+  const allHidden = new Set([...s.hidden, ...s.hiddenSections]);
+  if (allHidden.size) p.set("hide", [...allHidden].join(","));
   if (s.hideAvatarRing) p.set("hide_avatar_ring", "true");
   if (s.hideStreakEmoji) p.set("hide_streak_emoji", "true");
+  if (s.hideStatCharts) p.set("hide_stat_charts", "true");
   if (s.sectionSpacing !== 0) p.set("section_spacing", String(s.sectionSpacing));
   return `${BASE}?${p.toString()}`;
 }
@@ -729,12 +734,14 @@ function Snippet({ label, value, copied, onCopy }) {
 function CustomizeStep({ username, onChangeUser }) {
   const [state, setState] = useState({
     username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
-    hideAvatarRing: false, hideStreakEmoji: false, sectionSpacing: 0,
+    hideAvatarRing: false, hideStreakEmoji: false, hideStatCharts: false, sectionSpacing: 0,
+    hiddenSections: new Set(),
   });
   const [status, setStatus] = useState("loading");
   const [previewUrl, setPreviewUrl] = useState(() => buildStatsUrl({
     username, theme: "sakura", showIcons: true, compact: false, borderRadius: 14, hidden: new Set(),
-    hideAvatarRing: false, hideStreakEmoji: false, sectionSpacing: 0,
+    hideAvatarRing: false, hideStreakEmoji: false, hideStatCharts: false, sectionSpacing: 0,
+    hiddenSections: new Set(),
   }));
   const [copiedKey, setCopiedKey] = useState(null);
   const debounceRef = useRef(null);
@@ -751,6 +758,11 @@ function CustomizeStep({ username, onChangeUser }) {
     const next = new Set(s.hidden);
     next.has(stat) ? next.delete(stat) : next.add(stat);
     return { ...s, hidden: next };
+  });
+  const toggleHiddenSection = (sec) => setState(s => {
+    const next = new Set(s.hiddenSections);
+    next.has(sec) ? next.delete(sec) : next.add(sec);
+    return { ...s, hiddenSections: next };
   });
   const copy = async (key, text) => {
     try { await navigator.clipboard.writeText(text); setCopiedKey(key); setTimeout(() => setCopiedKey(null), 1800); } catch {}
@@ -831,6 +843,7 @@ function CustomizeStep({ username, onChangeUser }) {
           <ToggleRow label="Compact Mode" sub="Smaller, condensed card layout" checked={state.compact} onChange={v => update("compact", v)} icon={<Icon name="layout-grid" size={14} />} />
           <ToggleRow label="Hide Avatar Ring" sub="Remove the animated ring around avatar" checked={state.hideAvatarRing} onChange={v => update("hideAvatarRing", v)} icon={<Icon name={state.hideAvatarRing ? "eye-off" : "eye"} size={14} />} />
           <ToggleRow label="Hide Streak Emoji" sub="Remove fire emoji from streak section" checked={state.hideStreakEmoji} onChange={v => update("hideStreakEmoji", v)} icon={<Icon name={state.hideStreakEmoji ? "eye-off" : "eye"} size={14} />} />
+          <ToggleRow label="Hide Stat Charts" sub="Remove mini sparkline charts from stats grid" checked={state.hideStatCharts} onChange={v => update("hideStatCharts", v)} icon={<Icon name={state.hideStatCharts ? "eye-off" : "eye"} size={14} />} />
         </Panel>
 
         <Panel label="Section Spacing">
@@ -839,6 +852,27 @@ function CustomizeStep({ username, onChangeUser }) {
               onChange={e => update("sectionSpacing", parseInt(e.target.value))}
               className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
             <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.sectionSpacing}px</div>
+          </div>
+        </Panel>
+
+        <Panel label="Hide Sections" icon={<Icon name="eye-off" size={12} />}>
+          <p className="mb-2 font-mono text-[0.65rem] tracking-wide" style={{ color: 'var(--muted-foreground)' }}>Toggle entire sections on/off</p>
+          <div className="flex flex-wrap gap-2">
+            {HIDE_SECTIONS.map(sec => {
+              const active = state.hiddenSections.has(sec);
+              const label = sec === "streakinfo" ? "streak" : sec;
+              return (
+                <button key={sec} onClick={() => toggleHiddenSection(sec)}
+                  className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
+                  style={{
+                    borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
+                    background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
+                    color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+                  }}>
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </Panel>
 
