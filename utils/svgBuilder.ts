@@ -12,7 +12,7 @@ export interface RenderOptions {
   borderRadius: number;
   hideAvatarRing?: boolean;
   hideStreakEmoji?: boolean;
-  hideStatCharts?: boolean;  // hide the mini sparkline charts in stats grid
+//  hideStatCharts?: boolean;  // hide the mini sparkline charts in stats grid
   sectionSpacing?: number;   // extra px between lang/streak/pinned sections (default 0)
 }
 
@@ -528,9 +528,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
             font-size="${compact ? 11 : 12}" font-weight="700"
             fill="${theme.statValueColor}" text-anchor="end"
           >${escapeXml(stat.value)}</text>
-          ${!compact && !hideStatCharts && num > 0
-            ? buildSparkline(num, maxVal, valX-58, sy-2, 40, 13, theme.accentColor+"80", theme.accentColor, spId)
-            : ""}
+          
           <line x1="${sx}" y1="${sy+14}" x2="${sx+colW-10}" y2="${sy+14}"
             stroke="${theme.border}" stroke-width="0.4" opacity="0.3"/>
         </g>`;
