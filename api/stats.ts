@@ -26,12 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  // Cache 30min, stale-while-revalidate 24h (important for GitHub README caching)
   res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400");
-  // Disable X-Content-Type-Options sniffing so GitHub renders the SVG
   res.setHeader("X-Content-Type-Options", "nosniff");
 
-  // Theme + border radius (resolve early so error cards use correct theme)
   const themeRaw = typeof req.query["theme"] === "string" ? req.query["theme"] : "dark";
   const themeName = THEME_NAMES.includes(sanitizeTheme(themeRaw))
     ? sanitizeTheme(themeRaw)
