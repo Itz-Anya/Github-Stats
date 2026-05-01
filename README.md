@@ -1,17 +1,13 @@
 
 <div align="center">
 
-<img src="public/s.png" alt="GitHub Stats Logo" width="80" />
 
 # GitHub Stats Card Generator
 
 **Beautiful, highly customizable GitHub stats SVG cards — deployable on Vercel in one click.**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/Github-Stats)
+[![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Itz-Anya/Github-Stats)
 &nbsp;
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?logo=vercel)](https://vercel.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
 <br/>
 
