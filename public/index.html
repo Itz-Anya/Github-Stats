@@ -200,7 +200,7 @@ html, body {
 }
 
 
-/* ── About icon button ── */
+
 .about-btn {
   position: fixed;
   top: 9px;
@@ -227,7 +227,7 @@ html, body {
 }
 .about-btn i { font-size: 20px; line-height: 1; }
 
-/* ── Overlay backdrop ── */
+
 .about-overlay-backdrop {
   position: fixed;
   inset: 0;
@@ -248,7 +248,7 @@ html, body {
   pointer-events: all;
 }
 
-/* ── Overlay card ── */
+
 .about-card {
   position: relative;
   width: 100%;
@@ -269,7 +269,6 @@ html, body {
   transform: translateY(0) scale(1);
 }
 
-/* decorative blobs */
 .about-card::before {
   content: '';
   position: absolute;
@@ -289,7 +288,7 @@ html, body {
   pointer-events: none;
 }
 
-/* close button */
+
 .about-close {
   position: absolute;
   top: 14px; right: 14px;
@@ -306,7 +305,7 @@ html, body {
 }
 .about-close:hover { background: oklch(0.93 0.06 345); transform: scale(1.1); }
 
-/* logo image */
+
 .about-logo-wrap {
   display: flex;
   justify-content: center;
@@ -321,7 +320,7 @@ html, body {
   object-fit: cover;
 }
 
-/* text */
+
 .about-tag {
   display: inline-flex;
   align-items: center;
@@ -374,7 +373,7 @@ html, body {
   margin-bottom: 18px;
 }
 
-/* github button */
+
 .about-gh-btn {
   display: flex;
   align-items: center;
@@ -400,7 +399,7 @@ html, body {
   box-shadow: 0 10px 28px -6px oklch(0.72 0.17 350 / 0.55);
 }
 
-/* floating petals inside overlay */
+
 @keyframes about-petal {
   0%   { transform: translateY(0) rotate(0deg); opacity: 0.6; }
   100% { transform: translateY(-60px) rotate(180deg); opacity: 0; }
@@ -417,30 +416,30 @@ html, body {
 <body>
 <div id="root"></div>
 
-<!-- About icon button -->
+
 <button class="about-btn" id="aboutBtn" aria-label="About this app" title="About">
   <i class='bx bx-info-circle'></i>
 </button>
 
-<!-- About overlay -->
+
 <div class="about-overlay-backdrop" id="aboutOverlay" role="dialog" aria-modal="true" aria-label="About GitHub Stats Generator">
   <div class="about-card">
-    <!-- floating petals decoration -->
+    
     <span class="about-float-petal" style="bottom:20px;right:30px;animation-delay:0s;color:oklch(0.78 0.14 350)">✿</span>
     <span class="about-float-petal" style="bottom:60px;right:70px;animation-delay:1.2s;color:oklch(0.82 0.13 345)">❀</span>
     <span class="about-float-petal" style="bottom:10px;right:100px;animation-delay:2.4s;color:oklch(0.85 0.11 25)">✾</span>
 
-    <!-- close button (top left) -->
+    
     <button class="about-close" id="aboutClose" aria-label="Close">
       <i class='bx bx-x'></i>
     </button>
 
-    <!-- logo -->
+    
     <div class="about-logo-wrap">
       <img src="s.png" alt="GitHub Stats logo" onerror="this.style.background='oklch(0.92 0.06 345)';this.src=''" />
     </div>
 
-    <!-- content -->
+    
     <div style="text-align:center;">
       <div class="about-tag" style="margin:0 auto 10px;">
         <i class='bx bx-leaf' style="font-size:10px;"></i> Open Source
@@ -550,7 +549,7 @@ const THEMES = {
   "🌿 Nature": ["forest","desert","arctic","deep_sea","sunset"],
   "🎨 Colorful": ["rainbow_dark","pastel_rainbow","tropical","cosmic"],
 };
-// bg + accent colors per theme for swatches
+
 const THEME_COLORS = {
   dark:["#0d1117","#58a6ff"], github_dark:["#161b22","#3fb950"], tokyonight:["#1a1b27","#7aa2f7"],
   dracula:["#282a36","#bd93f9"], nord:["#2e3440","#88c0d0"], solarized:["#002b36","#268bd2"],
@@ -587,7 +586,6 @@ function buildStatsUrl(s) {
   if (!s.showIcons) p.set("show_icons", "false");
   if (s.compact) p.set("compact", "true");
   if (s.borderRadius !== 10) p.set("border_radius", String(s.borderRadius));
-  // Merge individual stat hides + whole-section hides into one ?hide= param
   const allHidden = new Set([...s.hidden, ...s.hiddenSections]);
   if (allHidden.size) p.set("hide", [...allHidden].join(","));
   if (s.hideAvatarRing) p.set("hide_avatar_ring", "true");
@@ -776,7 +774,7 @@ function ThemePanel({ state, update }) {
   }, [activeCategory, search]);
 
   const categoryGroups = useMemo(() => {
-    if (search.trim()) return null; // flat grid when searching
+    if (search.trim()) return null;
     if (activeCategory !== "All") return null;
     return THEMES;
   }, [activeCategory, search]);
