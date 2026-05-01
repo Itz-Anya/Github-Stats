@@ -47,14 +47,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).send(renderErrorCard(msg, theme, br));
   }
 
-  // Rate limit
+  
   const ip = getClientIP(req);
   if (!rateLimiter.isAllowed(ip)) {
     sendError("Rate limit exceeded — please wait a minute and try again.");
     return;
   }
 
-  // Validate username
+
   const rawUsername = req.query["username"];
   if (!rawUsername || typeof rawUsername !== "string" || rawUsername.trim() === "") {
     sendError("Missing required parameter: ?username=<github_username>");
@@ -69,7 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  // Options
+
   const hideRaw = typeof req.query["hide"] === "string" ? req.query["hide"] : "";
   const hideStats = parseHideList(hideRaw);
 
@@ -93,7 +93,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     ? clamp(parseInt(sectionSpacingRaw, 10) || 0, 0, 40)
     : 0;
 
-  // Fetch
+
+  
   try {
     const user = await fetchGitHubUser(username);
 
