@@ -215,29 +215,31 @@ npm run typecheck
 
 
 
-## 📄 License
+## 👩‍💻 Creators
 
-MIT © Itz-Anya & Itz-Murali
+<table width="100%">
+    <tr>
+      <td align="center" width="50%">
+        <img src="https://random-images-anya.vercel.app/anya" width="260"><br><br>
+        <b>𝜜ɴყꫝㅤ𓆩💗𓆪</b><br><br>
+        <a href="https://github.com/itz-Anya">
+          <img src="https://img.shields.io/badge/GitHub-Anya-black?style=for-the-badge&logo=github">
+        </a>
+      </td>
+      <td align="center" width="50%">
+        <img src="https://itz-murali-images.vercel.app/api" width="260"><br><br>
+        <b>𝐌 𝐔 𝐑 𝚨 𝐋 𝐈 𓂃ִֶָ⋆.˚</b><br><br>
+        <a href="https://github.com/Itz-Murali">
+          <img src="https://img.shields.io/badge/GitHub-Itz--Murali-black?style=for-the-badge&logo=github">
+        </a>
+      </td>
+    </tr>
+  </table>
+
 
 ---
 
-## 🙏 Credits
-
-- **Created by [Anya](https://github.com/itz-Anya) & Murali** — design, engineering, theme curation
-- **[Vercel](https://vercel.com/)** — serverless hosting
-- **[GitHub REST API](https://docs.github.com/en/rest)** + **[GraphQL API](https://docs.github.com/en/graphql)** — data source
-- **[Boxicons](https://boxicons.com/)** — UI icons
-- **[Google Fonts](https://fonts.google.com/)** — Fraunces, JetBrains Mono, Outfit
-- **[Tailwind CSS](https://tailwindcss.com/)** — UI styling
-- Inspired by [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats)
-
----
-
-<div align="center">
-
-Made with 🌸 by **[Anya](https://github.com/itz-Anya) & Murali**
-
-*If this helped you, please ⭐ the repo!*
-
-
-</div>
+<p align="center">
+⭐ If you like this project, don’t forget to star the repo!
+</p> 
+ 
