@@ -11,7 +11,7 @@
 
 <br/>
 
-![Stats Card Preview](public/s.png)
+![Stats Card Preview](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura)
 
 </div>
 
@@ -43,7 +43,7 @@ Replace `YOUR_USERNAME` with your GitHub handle. Done!
 ### 2. Deploy your own instance
 
 ```bash
-git clone https://github.com/yourusername/Github-Stats.git
+git clone https://github.com/Itz-Anya/Github-Stats.git
 cd Github-Stats
 npm install
 
