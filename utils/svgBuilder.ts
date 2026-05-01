@@ -11,6 +11,7 @@ export interface RenderOptions {
   borderRadius: number;
   hideAvatarRing?: boolean;
   hideStreakEmoji?: boolean;
+ // hideStatCharts?: boolean;
   sectionSpacing?: number;   
 }
 
@@ -325,7 +326,7 @@ function renderPinnedRepos(
 
 
 export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
-  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, hideStatCharts = false, sectionSpacing = 0 } = opts;
+  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, sectionSpacing = 0 } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
   const AV = compact ? 56 : 72;  
