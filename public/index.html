@@ -1156,10 +1156,17 @@ function CreatorsSection() {
             style={{ borderColor: 'var(--border)', boxShadow: 'var(--shadow-soft)' }}>
             <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: c.accent }} />
             <div className="flex items-center gap-4">
-              <div className="relative h-16 w-16 flex-shrink-0 rounded-2xl p-[2px] sm:h-20 sm:w-20" style={{ background: c.accent }}>
-                <img src={c.img} alt={`${c.name} avatar`} loading="lazy"
-                  className="h-full w-full rounded-[14px] object-cover" style={{ background: 'var(--muted)' }}
-                  onError={e => { e.currentTarget.style.display = "none"; }} />
+              <div className="relative h-16 w-16 flex-shrink-0 rounded-2xl sm:h-20 sm:w-20">
+  
+                <img
+    src={c.img}
+    alt={`${c.name} avatar`}
+    loading="lazy"
+    className="h-full w-full rounded-2xl object-cover"
+    style={{ background: 'var(--muted)' }}
+    onError={e => { e.currentTarget.style.display = "none"; }}
+  />
+
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-display text-xl font-bold text-foreground sm:text-2xl">{c.name}</h3>
