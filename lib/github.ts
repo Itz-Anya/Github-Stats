@@ -1,7 +1,5 @@
 import { cache } from "./cache.js";
 
-// ─── Public types ─────────────────────────────────────────────────────────────
-
 export interface LanguageStat {
   name: string;
   color: string;
@@ -20,11 +18,10 @@ export interface PinnedRepo {
 }
 
 export interface GitHubUser {
-  // Identity
   login: string;
   name: string | null;
   avatarUrl: string;
-  avatarBase64: string | null; // base64-encoded for embedding in SVG
+  avatarBase64: string | null;
   bio: string | null;
   company: string | null;
   location: string | null;
@@ -35,34 +32,28 @@ export interface GitHubUser {
   createdAt: string;
   updatedAt: string;
   accountAgeDays: number;
-  // Counts
   publicRepos: number;
   publicGists: number;
   followers: number;
   following: number;
-  // Derived stats
   totalStars: number;
-  totalForks: number;       // how many times user's repos were forked
+  totalForks: number;      
   totalWatchers: number;
   totalOpenIssues: number;
-  totalCommits: number;     // from GraphQL contributions
+  totalCommits: number;     
   totalPRs: number;
   totalIssuesOpened: number;
   totalCodeReviews: number;
   totalDiscussions: number;
-  // Contributions
   contributionsLastYear: number;
   privateContributions: number;
   longestStreak: number;
   currentStreak: number;
-  // Languages
   topLanguages: LanguageStat[];
-  // Repos
   pinnedRepos: PinnedRepo[];
   hasToken: boolean;
 }
 
-// ─── Internal REST types ─────────────────────────────────────────────────────
 
 interface RestUser {
   login: string;
@@ -94,7 +85,6 @@ interface RestRepo {
   size: number;
 }
 
-// ─── Internal GraphQL types ──────────────────────────────────────────────────
 
 interface GraphQLResponse {
   data?: {
@@ -141,7 +131,6 @@ interface GraphQLResponse {
   errors?: Array<{ message: string }>;
 }
 
-// ─── Config ──────────────────────────────────────────────────────────────────
 
 const GITHUB_API = "https://api.github.com";
 const GITHUB_GRAPHQL = "https://api.github.com/graphql";
@@ -174,7 +163,6 @@ function buildHeaders(etag?: string): Record<string, string> {
   return headers;
 }
 
-// ─── Avatar fetching (base64 embed — fixes GitHub README img blocking) ────────
 
 async function fetchAvatarBase64(url: string): Promise<string | null> {
   const cacheKey = `avatar:${url}`;
@@ -182,7 +170,6 @@ async function fetchAvatarBase64(url: string): Promise<string | null> {
   if (cached) return cached.data;
 
   try {
-    // Append size param for smaller payload
     const sized = url.includes("?") ? `${url}&s=96` : `${url}?s=96`;
     const res = await fetch(sized, {
       headers: { "User-Agent": "github-stats-service/2.0" },
@@ -198,14 +185,13 @@ async function fetchAvatarBase64(url: string): Promise<string | null> {
     const base64 = Buffer.from(buffer).toString("base64");
     const dataUri = `data:${safeType};base64,${base64}`;
 
-    cache.set(cacheKey, dataUri, 3600); // 1h cache for avatar
+    cache.set(cacheKey, dataUri, 3600); 
     return dataUri;
   } catch {
     return null;
   }
 }
 
-// ─── REST fetchers ────────────────────────────────────────────────────────────
 
 async function fetchRestUser(username: string): Promise<RestUser> {
   const cacheKey = `rest:${username}`;
@@ -245,14 +231,13 @@ async function fetchAllRepos(username: string): Promise<RestRepo[]> {
     pages.push(...data);
     if (data.length < 100) break;
     page++;
-    if (page > 5) break; // max 500 repos
+    if (page > 5) break; 
   }
 
   cache.set(cacheKey, pages, 1800);
   return pages;
 }
 
-// ─── GraphQL fetcher ──────────────────────────────────────────────────────────
 
 async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> {
   if (!TOKEN) return undefined;
@@ -327,7 +312,6 @@ async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> 
   return json.data;
 }
 
-// ─── Streak calculator ────────────────────────────────────────────────────────
 
 function calcStreaks(weeks: Array<{ contributionDays: Array<{ contributionCount: number; date: string }> }>): {
   longest: number;
@@ -346,17 +330,14 @@ function calcStreaks(weeks: Array<{ contributionDays: Array<{ contributionCount:
       streak++;
       if (streak > longest) longest = streak;
     } else {
-      // allow today to be 0 without breaking current streak
       if (d.date !== todayStr) streak = 0;
     }
   }
-  // current streak = trailing streak up to today
   current = streak;
 
   return { longest, current };
 }
 
-// ─── Language aggregator ──────────────────────────────────────────────────────
 
 function aggregateLanguages(
   repos: RestRepo[],
@@ -364,7 +345,7 @@ function aggregateLanguages(
 ): LanguageStat[] {
   const bytesMap = new Map<string, { bytes: number; color: string }>();
 
-  // Prefer GraphQL data (has byte sizes per language)
+  
   if (gqlNodes?.length) {
     for (const repo of gqlNodes) {
       for (const edge of repo.languages?.edges ?? []) {
@@ -377,7 +358,7 @@ function aggregateLanguages(
       }
     }
   } else {
-    // Fallback: count repos per language weighted by size
+    
     for (const repo of repos) {
       if (!repo.language || repo.fork) continue;
       const prev = bytesMap.get(repo.language);
@@ -402,7 +383,6 @@ function aggregateLanguages(
     }));
 }
 
-// ─── Pinned repos (public only via REST starred endpoint workaround) ──────────
 
 async function fetchPinnedRepos(username: string, gqlNodes?: GraphQLResponse["data"]): Promise<PinnedRepo[]> {
   if (gqlNodes?.user?.repositories?.nodes) {
@@ -422,50 +402,42 @@ async function fetchPinnedRepos(username: string, gqlNodes?: GraphQLResponse["da
   return [];
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
-  // Kick off REST and GraphQL in parallel
   const [restUser, repos, gqlData] = await Promise.all([
     fetchRestUser(username),
     fetchAllRepos(username),
     fetchGraphQL(username),
   ]);
 
-  // Avatar as base64 for reliable embedding in GitHub README img tags
   const avatarBase64 = await fetchAvatarBase64(restUser.avatar_url);
 
   const gqlUser = gqlData?.user;
   const cc = gqlUser?.contributionsCollection;
   const gqlNodes = gqlUser?.repositories?.nodes ?? undefined;
-
-  // Aggregate REST repo stats (own repos only)
+  
   const ownRepos = repos.filter((r) => !r.fork);
   const totalStars = ownRepos.reduce((s, r) => s + r.stargazers_count, 0);
   const totalForks = ownRepos.reduce((s, r) => s + r.forks_count, 0);
   const totalWatchers = ownRepos.reduce((s, r) => s + r.watchers_count, 0);
   const totalOpenIssues = ownRepos.reduce((s, r) => s + r.open_issues_count, 0);
 
-  // Commit/contribution data
   const totalCommits = (cc?.totalCommitContributions ?? 0) + (cc?.restrictedContributionsCount ?? 0);
   const totalPRs = cc?.totalPullRequestContributions ?? 0;
   const totalIssuesOpened = cc?.totalIssueContributions ?? 0;
   const totalCodeReviews = cc?.totalPullRequestReviewContributions ?? 0;
-  const totalDiscussions = 0; // not widely available without org scopes
+  const totalDiscussions = 0;
   const contributionsLastYear = cc?.contributionCalendar?.totalContributions ?? 0;
   const privateContributions = cc?.restrictedContributionsCount ?? 0;
 
-  // Streak
   const weeks = cc?.contributionCalendar?.weeks ?? [];
   const { longest: longestStreak, current: currentStreak } = calcStreaks(weeks);
 
-  // Languages
   const topLanguages = aggregateLanguages(repos, gqlNodes);
 
-  // Pinned / top repos
   const pinnedRepos = await fetchPinnedRepos(username, gqlData);
 
-  // Account age
+  
   const createdAt = new Date(restUser.created_at);
   const accountAgeDays = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
 
