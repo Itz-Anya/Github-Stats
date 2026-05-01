@@ -106,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       borderRadius: br,
       hideAvatarRing,
       hideStreakEmoji,
-      hideStatCharts,
+   //   hideStatCharts,
       sectionSpacing,
     });
 
