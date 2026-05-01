@@ -1,3 +1,4 @@
+
 <div align="center">
 
 <img src="https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura" width="100%" alt="Itz-Anya GitHub Stats — Sakura" />
@@ -32,7 +33,11 @@ No build step. No JavaScript required. Just one URL.
 
 ## 🚀 Quick Start
 
-### Embed in your README (30 seconds)
+### Option A — Use the visual generator (easiest)
+
+Open **[anya-github-stats.vercel.app](https://anya-github-stats.vercel.app)**, type your username, pick a theme, and copy the generated Markdown snippet straight into your README.
+
+### Option B — Embed directly
 
 ```markdown
 ![GitHub Stats](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya)
@@ -56,113 +61,31 @@ echo "GITHUB_TOKEN=ghp_yourtoken" > .env
 npx vercel --prod
 ```
 
-Or just click **Deploy on Vercel** above ☝️
+Or just click **Deploy on Vercel** above ☝️ — your own generator + API will be live in under a minute.
 
 ---
 
-## 🖼️ Theme Gallery
+## 🎨 Themes
 
-All previews use **`Itz-Anya`**. 65+ themes across 12 categories.
+**65+ themes across 12 categories.** Pass any theme name as `&theme=<name>`.
 
-### 🌑 Dark Dev
+> 🌐 **Want to browse & preview all themes visually?**
+> Open the card generator → **[anya-github-stats.vercel.app](https://anya-github-stats.vercel.app)** — pick your theme, tweak settings, and copy the ready-made Markdown in one click.
 
-| `dark` | `github_dark` | `tokyonight` |
-|:---:|:---:|:---:|
-| ![dark](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=dark) | ![github_dark](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=github_dark) | ![tokyonight](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=tokyonight) |
-
-| `dracula` | `nord` | `monokai` |
-|:---:|:---:|:---:|
-| ![dracula](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=dracula) | ![nord](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=nord) | ![monokai](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=monokai) |
-
-### 🌌 Futuristic
-
-| `cyberpunk` | `midnight` | `galaxy` |
-|:---:|:---:|:---:|
-| ![cyberpunk](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=cyberpunk) | ![midnight](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=midnight) | ![galaxy](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=galaxy) |
-
-| `aurora` | `neon_dreams` | `starlight` |
-|:---:|:---:|:---:|
-| ![aurora](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=aurora) | ![neon_dreams](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_dreams) | ![starlight](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=starlight) |
-
-### ☀️ Light
-
-| `light` | `github_light` |
-|:---:|:---:|
-| ![light](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=light) | ![github_light](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=github_light) |
-
-### 🌸 Pastel
-
-| `sakura` | `rose_gold` | `lavender` |
-|:---:|:---:|:---:|
-| ![sakura](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura) | ![rose_gold](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=rose_gold) | ![lavender](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=lavender) |
-
-| `cotton_candy` | `bubblegum` | `mint_fresh` |
-|:---:|:---:|:---:|
-| ![cotton_candy](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=cotton_candy) | ![bubblegum](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=bubblegum) | ![mint_fresh](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=mint_fresh) |
-
-| `sunshine` | `ocean_breeze` | `cherry_blossom` |
-|:---:|:---:|:---:|
-| ![sunshine](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sunshine) | ![ocean_breeze](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=ocean_breeze) | ![cherry_blossom](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=cherry_blossom) |
-
-### ⚡ Neon
-
-| `neon_green` | `neon_pink` | `neon_blue` |
-|:---:|:---:|:---:|
-| ![neon_green](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_green) | ![neon_pink](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_pink) | ![neon_blue](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_blue) |
-
-| `neon_purple` | `neon_orange` | `neon_red` |
-|:---:|:---:|:---:|
-| ![neon_purple](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_purple) | ![neon_orange](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_orange) | ![neon_red](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=neon_red) |
-
-### 🖤 Ultra Dark
-
-| `obsidian` | `black_ice` | `pitch_dark` |
-|:---:|:---:|:---:|
-| ![obsidian](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=obsidian) | ![black_ice](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=black_ice) | ![pitch_dark](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=pitch_dark) |
-
-### 💎 Beautiful
-
-| `emerald` | `sapphire` | `ruby` |
-|:---:|:---:|:---:|
-| ![emerald](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=emerald) | ![sapphire](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sapphire) | ![ruby](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=ruby) |
-
-| `velvet` | `amber_glow` | `golden_hour` |
-|:---:|:---:|:---:|
-| ![velvet](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=velvet) | ![amber_glow](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=amber_glow) | ![golden_hour](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=golden_hour) |
-
-### ☀️ Bright
-
-| `vivid_day` | `solar_flare` | `electric` | `lime_burst` |
-|:---:|:---:|:---:|:---:|
-| ![vivid_day](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=vivid_day) | ![solar_flare](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=solar_flare) | ![electric](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=electric) | ![lime_burst](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=lime_burst) |
-
-### ✏️ Simple / Minimal
-
-| `minimal_white` | `minimal_dark` | `paper` | `ink` |
-|:---:|:---:|:---:|:---:|
-| ![minimal_white](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=minimal_white) | ![minimal_dark](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=minimal_dark) | ![paper](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=paper) | ![ink](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=ink) |
-
-### 📺 Retro
-
-| `retro_terminal` | `amber_crt` | `vaporwave` | `outrun` |
-|:---:|:---:|:---:|:---:|
-| ![retro_terminal](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=retro_terminal) | ![amber_crt](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=amber_crt) | ![vaporwave](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=vaporwave) | ![outrun](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=outrun) |
-
-### 🌿 Nature
-
-| `forest` | `desert` | `arctic` |
-|:---:|:---:|:---:|
-| ![forest](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=forest) | ![desert](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=desert) | ![arctic](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=arctic) |
-
-| `deep_sea` | `sunset` | |
-|:---:|:---:|:---:|
-| ![deep_sea](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=deep_sea) | ![sunset](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sunset) | |
-
-### 🎨 Colorful
-
-| `rainbow_dark` | `pastel_rainbow` | `tropical` | `cosmic` |
-|:---:|:---:|:---:|:---:|
-| ![rainbow_dark](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=rainbow_dark) | ![pastel_rainbow](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=pastel_rainbow) | ![tropical](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=tropical) | ![cosmic](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=cosmic) |
+| Category | Themes |
+|----------|--------|
+| 🌑 **Dark Dev** | `dark` · `github_dark` · `tokyonight` · `dracula` · `nord` · `solarized` · `monokai` |
+| 🌌 **Futuristic** | `cyberpunk` · `midnight` · `ocean_dark` · `neon_dreams` · `galaxy` · `aurora` · `starlight` |
+| ☀️ **Light** | `light` · `github_light` |
+| 🌸 **Pastel** | `sakura` · `rose_gold` · `lavender` · `cotton_candy` · `mint_fresh` · `peach_blossom` · `bubblegum` · `sunshine` · `ocean_breeze` · `cherry_blossom` · `pastel_rainbow` |
+| ⚡ **Neon** | `neon_green` · `neon_pink` · `neon_orange` · `neon_blue` · `neon_purple` · `neon_red` |
+| 🖤 **Ultra Dark** | `obsidian` · `black_ice` · `pitch_dark` |
+| 💎 **Beautiful** | `emerald` · `sapphire` · `ruby` · `amber_glow` · `velvet` · `golden_hour` |
+| ☀️ **Bright** | `vivid_day` · `solar_flare` · `electric` · `lime_burst` |
+| ✏️ **Simple** | `minimal_white` · `minimal_dark` · `paper` · `ink` · `mono_slate` |
+| 📺 **Retro** | `retro_terminal` · `amber_crt` · `vaporwave` · `outrun` |
+| 🌿 **Nature** | `forest` · `desert` · `arctic` · `deep_sea` · `sunset` |
+| 🎨 **Colorful** | `rainbow_dark` · `pastel_rainbow` · `tropical` · `cosmic` |
 
 ---
 
@@ -212,19 +135,32 @@ https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=vaporwave
 
 ---
 
-## 🌐 Web UI Generator
+## 🌐 Card Generator — Try It Live
 
-Every deployment hosts a visual no-code builder at its root URL:
+<div align="center">
+
+### 👉 **[anya-github-stats.vercel.app](https://anya-github-stats.vercel.app)**
+
+*Enter your username → pick a theme → copy your Markdown. No coding needed.*
+
+</div>
+
+The generator is hosted at the **root URL** of every deployment. Just open it in your browser:
 
 ```
-https://anya-github-stats.vercel.app/
+https://anya-github-stats.vercel.app
 ```
 
-- **Live preview** — card refreshes in real time
-- **Theme browser** — all 65+ themes in category tabs, one-click selection
-- **Toggle controls** — icons, avatar ring, streak emoji, charts, sections
-- **Sliders** — border radius and section spacing
-- **One-click copy** — Direct URL · Markdown · HTML snippet
+What you can do there:
+
+- **Live preview** — card updates in real time as you change any setting
+- **Theme browser** — all 65+ themes with color swatches, search, and category tabs
+- **Toggle controls** — icons, avatar ring, streak emoji, stat charts, entire sections
+- **Sliders** — border radius (0–28 px) and section spacing (0–40 px)
+- **Hide individual stats** — repos, stars, forks, commits, PRs, and more
+- **One-click copy** — Direct URL · Markdown · HTML — ready to paste into your README
+
+> If you deploy your own instance, your generator lives at your own Vercel URL, e.g. `https://your-project.vercel.app`
 
 ---
 
