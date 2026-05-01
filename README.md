@@ -6,12 +6,15 @@
 
 **Beautiful, highly customizable GitHub stats SVG cards — deployable on Vercel in one click.**
 
-[![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Itz-Anya/Github-Stats)
-&nbsp;
 
 <br/>
 
 ![Stats Card Preview](https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura)
+
+
+[![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Itz-Anya/Github-Stats)
+&nbsp;
+
 
 </div>
 
