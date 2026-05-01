@@ -1,11 +1,11 @@
 
 <div align="center">
 
-<img src="https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura" width="100%" alt="Itz-Anya GitHub Stats — Sakura" />
-
-<br/>
 
 # GitHub Stats Card Generator
+
+<img src="https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura" width="100%" alt="Itz-Anya GitHub Stats — Sakura" />
+
 
 **Beautiful, highly customizable GitHub stats SVG cards — deploy on Vercel in one click.**
 
@@ -13,11 +13,7 @@
 
 [![Deploy on Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Itz-Anya/Github-Stats)
 &nbsp;&nbsp;
-[![GitHub Stars](https://img.shields.io/github/stars/Itz-Anya/Github-Stats?style=flat-square&color=e91e8c&labelColor=fce4ec)](https://github.com/Itz-Anya/Github-Stats/stargazers)
-&nbsp;&nbsp;
-[![License: MIT](https://img.shields.io/badge/License-MIT-ff69b4.svg?style=flat-square)](LICENSE)
-&nbsp;&nbsp;
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 
 </div>
 
@@ -35,7 +31,7 @@ No build step. No JavaScript required. Just one URL.
 
 ### Option A — Use the visual generator (easiest)
 
-Open **[anya-github-stats.vercel.app](https://anya-github-stats.vercel.app)**, type your username, pick a theme, and copy the generated Markdown snippet straight into your README.
+Open **[Website](https://anya-github-stats.vercel.app)**, type your username, pick a theme, and copy the generated Markdown snippet straight into your README.
 
 ### Option B — Embed directly
 
@@ -139,7 +135,7 @@ https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=vaporwave
 
 <div align="center">
 
-### 👉 **[anya-github-stats.vercel.app](https://anya-github-stats.vercel.app)**
+### 👉 **[GitHub Stats Gen](https://anya-github-stats.vercel.app)**
 
 *Enter your username → pick a theme → copy your Markdown. No coding needed.*
 
@@ -164,29 +160,8 @@ What you can do there:
 
 ---
 
-## 🏗️ Project Structure
 
-```
-Github-Stats/
-├── api/
-│   └── stats.ts          # Vercel serverless handler — routing & validation
-├── lib/
-│   ├── github.ts         # GitHub REST + GraphQL fetching, base64 avatar
-│   ├── cache.ts          # In-memory LRU cache (30-min TTL)
-│   └── rateLimit.ts      # Per-IP sliding-window rate limiter
-├── themes/
-│   └── index.ts          # 65+ theme definitions + getTheme() helper
-├── utils/
-│   ├── svgBuilder.ts     # Full SVG renderer (stats, langs, streaks, pinned)
-│   └── sanitize.ts       # Input sanitization & username validation
-├── public/
-│   ├── index.html        # Visual generator UI (React-in-browser)
-│   └── s.png             # Logo / favicon
-├── vercel.json           # Vercel routing config
-└── package.json
-```
 
----
 
 ## ⚙️ Environment Variables
 
@@ -238,24 +213,11 @@ npm run typecheck
 
 ---
 
-## 🤝 Contributing
 
-Pull requests are welcome!
-
-### Adding a theme
-
-1. Add your theme object to `themes/index.ts` following the `Theme` interface.
-2. Add the key to the appropriate category in the `THEMES` constant in `public/index.html`.
-3. Test locally: `npx vercel dev`
-4. Open a PR with a screenshot of the rendered card.
-
-**Naming convention:** `lowercase_with_underscores`
-
----
 
 ## 📄 License
 
-MIT © Anya & Murali
+MIT © Itz-Anya & Itz-Murali
 
 ---
 
@@ -277,6 +239,5 @@ Made with 🌸 by **[Anya](https://github.com/itz-Anya) & Murali**
 
 *If this helped you, please ⭐ the repo!*
 
-[![Star on GitHub](https://img.shields.io/github/stars/Itz-Anya/Github-Stats?style=social)](https://github.com/Itz-Anya/Github-Stats/stargazers)
 
 </div>
