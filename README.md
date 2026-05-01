@@ -1,9 +1,6 @@
 <div align="center">
 
-
 # GitHub Stats Card Generator
-
-
 
 <img src="https://anya-github-stats.vercel.app/api/stats?username=Itz-Anya&theme=sakura" width="100%" alt="Itz-Anya GitHub Stats — Sakura" />
 
