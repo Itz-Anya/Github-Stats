@@ -2,7 +2,6 @@ import { Theme } from "../themes/index.js";
 import { GitHubUser, LanguageStat } from "../lib/github.js";
 import { formatNumber, formatDate, escapeXml, truncate } from "./sanitize.js";
 
-// ─── Options ───────────────────────────────────────────────────────────────────
 
 export interface RenderOptions {
   theme: Theme;
@@ -12,11 +11,9 @@ export interface RenderOptions {
   borderRadius: number;
   hideAvatarRing?: boolean;
   hideStreakEmoji?: boolean;
-//  hideStatCharts?: boolean;  // hide the mini sparkline charts in stats grid
-  sectionSpacing?: number;   // extra px between lang/streak/pinned sections (default 0)
+  sectionSpacing?: number;   
 }
 
-// ─── SVG Octicon paths ────────────────────────────────────────────────────────
 
 const ICONS: Record<string, string> = {
   repo:       `<path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 010-1.5H13v-2h-2a1 1 0 01-1-1V8.5a1 1 0 011-1h2V4h-8a1 1 0 00-1 1v1.5a.75.75 0 01-1.5 0V5A2.5 2.5 0 012 2.5z"/>`,
@@ -47,13 +44,11 @@ function inlineIcon(name: string, color: string, size = 14): string {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-// ─── Unique ID helper ─────────────────────────────────────────────────────────
 
 function uid(prefix = "g"): string {
   return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-// ─── Gradient helpers ─────────────────────────────────────────────────────────
 
 function linearGradient(
   id: string,
@@ -66,7 +61,6 @@ function linearGradient(
   return `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${s}</linearGradient>`;
 }
 
-// ─── CSS Animations ───────────────────────────────────────────────────────────
 
 function buildAnimations(): string {
   return `<style>
@@ -102,7 +96,6 @@ function buildAnimations(): string {
   </style>`;
 }
 
-// ─── Noise filter ─────────────────────────────────────────────────────────────
 
 function noiseFilter(id: string): string {
   return `<filter id="${id}" x="0" y="0" width="100%" height="100%">
@@ -113,7 +106,6 @@ function noiseFilter(id: string): string {
   </filter>`;
 }
 
-// ─── Stat row data ────────────────────────────────────────────────────────────
 
 interface StatRow {
   key: string;
@@ -138,14 +130,12 @@ function buildStatRows(user: GitHubUser): StatRow[] {
   ];
 }
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
 
 function buildSparkline(
   value: number, maxVal: number,
   x: number, y: number, w: number, h: number,
   strokeColor: string, dotColor: string, areaGradId: string
 ): string {
-  // Deterministic pseudo-random points seeded from value
   const pts: number[] = [];
   let s = (value || 1) & 0xffffffff;
   for (let i = 0; i < 12; i++) {
@@ -181,7 +171,6 @@ function buildSparkline(
   `;
 }
 
-// ─── Circular progress ring ───────────────────────────────────────────────────
 
 function circularProgress(
   cx: number, cy: number, r: number,
@@ -219,7 +208,6 @@ function circularProgress(
   `;
 }
 
-// ─── Section heading ──────────────────────────────────────────────────────────
 
 function sectionHeading(
   x: number, y: number, label: string,
@@ -238,7 +226,6 @@ function sectionHeading(
   `;
 }
 
-// ─── Fancy gradient divider ───────────────────────────────────────────────────
 
 function fancyDivider(x: number, y: number, w: number, gradId: string, accentColor: string, borderColor: string): string {
   return `
@@ -252,7 +239,6 @@ function fancyDivider(x: number, y: number, w: number, gradId: string, accentCol
   `;
 }
 
-// ─── Account age badge ────────────────────────────────────────────────────────
 
 function accountAgeBadge(
   x: number, y: number, ageDays: number,
@@ -269,7 +255,6 @@ function accountAgeBadge(
   `;
 }
 
-// ─── Meta / bio helpers ───────────────────────────────────────────────────────
 
 function buildMetaLines(user: GitHubUser): string[] {
   const lines: string[] = [];
@@ -290,7 +275,6 @@ function wrapText(text: string, maxChars: number): string[] {
   return lines;
 }
 
-// ─── Pinned repos mini-cards ──────────────────────────────────────────────────
 
 function renderPinnedRepos(
   user: GitHubUser, startY: number, W: number, P: number, theme: Theme
@@ -339,16 +323,14 @@ function renderPinnedRepos(
   return { svg, height: totalH };
 }
 
-// ─── Main card ────────────────────────────────────────────────────────────────
 
 export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, hideStatCharts = false, sectionSpacing = 0 } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
-  const AV = compact ? 56 : 72;  // avatar size
+  const AV = compact ? 56 : 72;  
   const W  = compact ? 440 : 520;
 
-  // ── Unique IDs
   const bgGradId    = uid("bg");
   const barGradId   = uid("bar");
   const acGradId    = uid("ac");
@@ -363,7 +345,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     ? theme.barFill as [string, string]
     : [theme.barFill as string, theme.barFill as string];
 
-  // ── Layout measurements
   const allStats   = buildStatRows(user).filter(s => !hideStats.has(s.key));
   const COLS       = 2;
   const statRowCnt = Math.ceil(allStats.length / COLS);
@@ -380,7 +361,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const STATS_H  = hasStats ? (statRowCnt * STAT_ROW_H + 30) : 0;
   const DIV2_Y   = DIV1_Y + STATS_H;
 
-  // Base inter-section gap (16px) + user-supplied sectionSpacing
+
   const GAP = 16 + sectionSpacing;
 
   const hasLangs  = user.topLanguages.length > 0 && !hideStats.has("languages");
@@ -397,7 +378,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   const CARD_H = (hasPinned ? DIV4_Y + pinnedData.height : DIV4_Y + (hasStreak ? 4 : 0)) + P + 8;
 
-  // ── Defs
+  
   const defs = `
     <defs>
       ${buildAnimations()}
@@ -424,7 +405,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     </defs>
   `;
 
-  // ── Background
+
   const bgFill = theme.backgroundGradient ? `url(#${bgGradId})` : theme.background;
   const cardBg = `
     <rect x="1" y="1" width="${W-2}" height="${CARD_H-2}" rx="${br}" fill="${bgFill}"
@@ -435,7 +416,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
       fill="${theme.background}" opacity="0.025" filter="url(#${noiseId})" pointer-events="none"/>
   `;
 
-  // ── Avatar
+
   const ACX = P + AV/2, ACY = P + AV/2, AR = AV/2;
   const avatarSrc = user.avatarBase64 ?? `${user.avatarUrl}?s=128`;
 
@@ -451,7 +432,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     />` : ""}
   `;
 
-  // ── Header
+
   const nameX = P + AV + 16;
   const nameY = P + (compact ? 20 : 24);
 
@@ -475,12 +456,12 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   });
 
   if (!compact && user.accountAgeDays > 0) {
-    // account age badge removed
+ // not needs
   }
 
   headerSvg += `</g>`;
 
-  // ── Meta lines
+
   let metaSvg = "";
   if (!compact) {
     const metaY0 = HEADER_H + 8;
@@ -492,13 +473,13 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     });
   }
 
-  // ── Dividers
+
   const div1 = hasStats  ? fancyDivider(P, DIV1_Y, W-P*2, uid("d1"), theme.accentColor, theme.border) : "";
   const div2 = hasLangs  ? fancyDivider(P, DIV2_Y, W-P*2, uid("d2"), theme.accentColor, theme.border) : "";
   const div3 = hasStreak ? fancyDivider(P, DIV3_Y, W-P*2, uid("d3"), theme.accentColor, theme.border) : "";
   const div4 = hasPinned ? fancyDivider(P, DIV4_Y, W-P*2, uid("d4"), theme.accentColor, theme.border) : "";
 
-  // ── Stats grid
+
   const STATS_Y  = DIV1_Y + 20;
   const colW     = (W - P*2) / COLS;
   const maxVal   = Math.max(user.totalCommits, user.totalStars, user.publicRepos, user.followers, 1);
@@ -535,7 +516,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     });
   }
 
-  // ── Language bar
   let langSvg = "";
   if (hasLangs) {
     const LY  = DIV2_Y + 20;
@@ -569,7 +549,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     langSvg += `</g>`;
   }
 
-  // ── Streak section
+
   let streakSvg = "";
   if (hasStreak) {
     const SY      = DIV3_Y + 12;
@@ -578,7 +558,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     streakSvg += `<g class="streak-anim">`;
     streakSvg += sectionHeading(P, SY - 2, "STREAK & ACTIVITY", theme.accentColor, theme.subTextColor, W-P*2);
 
-    // Helper: streak card
+    
     const streakCard = (x: number, label: string, val: string, hot: boolean, bgId: string, bdrId: string) => {
       return `
         <defs>
@@ -600,7 +580,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     streakSvg += streakCard(P, "Current Streak", `${user.currentStreak} days`, user.currentStreak >= 3, uid("s1bg"), uid("s1br"));
     streakSvg += streakCard(P + thirdW + 8, "Longest Streak", `${user.longestStreak} days`, user.longestStreak >= 7, uid("s2bg"), uid("s2br"));
 
-    // Contributions ring
+
     const circCX = P + (thirdW + 8) * 2 + thirdW / 2;
     const circCY = SY + 29;
     const pct    = Math.min((user.contributionsLastYear / 1500) * 100, 100);
@@ -615,14 +595,13 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
     streakSvg += `</g>`;
   }
 
-  // ── Pinned repos
   const pinnedSvg = hasPinned ? `
     <g class="pinned-anim">
       ${sectionHeading(P, DIV4_Y + 14, "PINNED REPOS", theme.accentColor, theme.subTextColor, W-P*2)}
       ${pinnedData.svg}
     </g>` : "";
 
-  // ── Bottom accent bar
+
   const accentBar = `
     <rect x="${br < 4 ? 1 : br * 0.6}" y="${CARD_H - 5}" width="${W - (br < 4 ? 2 : br * 1.2)}" height="4"
       rx="${Math.min(br, 4)}" fill="url(#${acGradId})" opacity="0.9"/>
@@ -652,7 +631,6 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 </svg>`;
 }
 
-// ─── Error card ───────────────────────────────────────────────────────────────
 
 export function renderErrorCard(message: string, theme: Theme, br: number): string {
   const W = 480, H = 130;
