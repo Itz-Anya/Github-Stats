@@ -85,8 +85,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const hideStreakEmojiRaw = req.query["hide_streak_emoji"];
   const hideStreakEmoji = hideStreakEmojiRaw === "true" || hideStreakEmojiRaw === "1";
 
-  const hideStatChartsRaw = req.query["hide_stat_charts"];
-  const hideStatCharts = hideStatChartsRaw === "true" || hideStatChartsRaw === "1";
+//  const hideStatChartsRaw = req.query["hide_stat_charts"];
+ // const hideStatCharts = hideStatChartsRaw === "true" || hideStatChartsRaw === "1";
 
   const sectionSpacingRaw = req.query["section_spacing"];
   const sectionSpacing = typeof sectionSpacingRaw === "string" && sectionSpacingRaw !== ""
