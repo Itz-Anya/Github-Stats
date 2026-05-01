@@ -329,7 +329,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const { theme, hideStats, showIcons, compact, hideAvatarRing = false, hideStreakEmoji = false, sectionSpacing = 0 } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
-  const AV = compact ? 56 : 72;  
+  const AV = compact ? 68 : 90;  
   const W  = compact ? 440 : 520;
 
   const bgGradId    = uid("bg");
@@ -434,25 +434,25 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   `;
 
 
-  const nameX = P + AV + 16;
-  const nameY = P + (compact ? 20 : 24);
+  const nameX = P + AV + 22;
+  const nameY = P + (compact ? 22 : 26);
 
   let headerSvg = `<g class="header-anim">`;
   headerSvg += `
     <text x="${nameX}" y="${nameY}"
       font-family="system-ui,-apple-system,'Segoe UI',sans-serif"
-      font-size="${compact ? 17 : 20}" font-weight="800" letter-spacing="-0.3"
+      font-size="${compact ? 19 : 23}" font-weight="800" letter-spacing="-0.3"
       fill="${theme.titleColor}">${escapeXml(truncate(user.name ?? user.login, compact ? 22 : 28))}</text>
-    <text x="${nameX}" y="${nameY + (compact ? 16 : 18)}"
+    <text x="${nameX}" y="${nameY + (compact ? 18 : 21)}"
       font-family="'SF Mono',ui-monospace,monospace"
-      font-size="${compact ? 10 : 11}" fill="${theme.accentColor}" opacity="0.9"
+      font-size="${compact ? 11 : 13}" fill="${theme.accentColor}" opacity="0.9"
     >@${escapeXml(user.login)}</text>
   `;
 
   bioLines.forEach((line, i) => {
     headerSvg += `
-      <text x="${nameX}" y="${nameY + 34 + i*14}"
-        font-family="system-ui,sans-serif" font-size="11.5" fill="${theme.subTextColor}" opacity="0.82"
+      <text x="${nameX}" y="${nameY + 40 + i*15}"
+        font-family="system-ui,sans-serif" font-size="13" fill="${theme.subTextColor}" opacity="0.82"
       >${escapeXml(line)}</text>`;
   });
 
