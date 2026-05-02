@@ -86,25 +86,27 @@ interface RestRepo {
 }
 
 
+interface YearContributions {
+  totalCommitContributions: number;
+  totalPullRequestContributions: number;
+  totalIssueContributions: number;
+  totalPullRequestReviewContributions: number;
+  restrictedContributionsCount: number;
+  contributionCalendar: {
+    totalContributions: number;
+    weeks: Array<{
+      contributionDays: Array<{
+        contributionCount: number;
+        date: string;
+      }>;
+    }>;
+  };
+}
+
 interface GraphQLResponse {
   data?: {
     user?: {
-      contributionsCollection?: {
-        totalCommitContributions: number;
-        totalPullRequestContributions: number;
-        totalIssueContributions: number;
-        totalPullRequestReviewContributions: number;
-        restrictedContributionsCount: number;
-        contributionCalendar?: {
-          totalContributions: number;
-          weeks?: Array<{
-            contributionDays: Array<{
-              contributionCount: number;
-              date: string;
-            }>;
-          }>;
-        };
-      };
+      contributionsCollection?: YearContributions;
       repositoriesContributedTo?: {
         totalCount: number;
       };
@@ -239,17 +241,18 @@ async function fetchAllRepos(username: string): Promise<RestRepo[]> {
 }
 
 
-async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> {
+
+async function fetchGraphQLForYear(
+  username: string,
+  from: string,
+  to: string
+): Promise<YearContributions | undefined> {
   if (!TOKEN) return undefined;
 
-  const cacheKey = `graphql:${username}`;
-  const cached = cache.get<GraphQLResponse["data"]>(cacheKey);
-  if (cached) return cached.data;
-
   const query = `
-    query($login: String!) {
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
       user(login: $login) {
-        contributionsCollection {
+        contributionsCollection(from: $from, to: $to) {
           totalCommitContributions
           totalPullRequestContributions
           totalIssueContributions
@@ -265,6 +268,40 @@ async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> 
             }
           }
         }
+      }
+    }
+  `;
+
+  const res = await fetch(GITHUB_GRAPHQL, {
+    method: "POST",
+    headers: { ...buildHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables: { login: username, from, to } }),
+  });
+
+  if (!res.ok) return undefined;
+
+  const json = (await res.json()) as GraphQLResponse;
+  if (json.errors?.length) {
+    const msg = json.errors[0].message;
+    if (msg.toLowerCase().includes("could not resolve")) throw new Error("USER_NOT_FOUND");
+    return undefined;
+  }
+
+  return json.data?.user?.contributionsCollection;
+}
+
+
+
+async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> {
+  if (!TOKEN) return undefined;
+
+  const cacheKey = `graphql:${username}`;
+  const cached = cache.get<GraphQLResponse["data"]>(cacheKey);
+  if (cached) return cached.data;
+
+  const query = `
+    query($login: String!) {
+      user(login: $login) {
         repositoriesContributedTo(
           first: 1
           contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY, PULL_REQUEST_REVIEW]
@@ -310,6 +347,75 @@ async function fetchGraphQL(username: string): Promise<GraphQLResponse["data"]> 
 
   cache.set(cacheKey, json.data, 1800);
   return json.data;
+}
+
+
+
+async function fetchAllYearsContributions(
+  username: string,
+  accountCreatedAt: string
+): Promise<{
+  totalCommits: number;
+  totalPRs: number;
+  totalIssuesOpened: number;
+  totalCodeReviews: number;
+  privateContributions: number;
+  contributionsLastYear: number;
+  allWeeks: Array<{ contributionDays: Array<{ contributionCount: number; date: string }> }>;
+}> {
+  const cacheKey = `allYears:${username}`;
+  const cached = cache.get<ReturnType<typeof fetchAllYearsContributions> extends Promise<infer T> ? T : never>(cacheKey);
+  if (cached) return cached.data;
+
+  const startYear = new Date(accountCreatedAt).getFullYear();
+  const currentYear = new Date().getFullYear();
+
+  const years: Array<{ from: string; to: string }> = [];
+  for (let year = startYear; year <= currentYear; year++) {
+    years.push({
+      from: `${year}-01-01T00:00:00Z`,
+      to: year === currentYear
+        ? new Date().toISOString()
+        : `${year}-12-31T23:59:59Z`,
+    });
+  }
+
+  const results = await Promise.all(
+    years.map(({ from, to }) => fetchGraphQLForYear(username, from, to))
+  );
+
+  let totalCommits = 0;
+  let totalPRs = 0;
+  let totalIssuesOpened = 0;
+  let totalCodeReviews = 0;
+  let privateContributions = 0;
+  const allWeeks: Array<{ contributionDays: Array<{ contributionCount: number; date: string }> }> = [];
+
+  for (const cc of results) {
+    if (!cc) continue;
+    totalCommits += cc.totalCommitContributions + cc.restrictedContributionsCount;
+    totalPRs += cc.totalPullRequestContributions;
+    totalIssuesOpened += cc.totalIssueContributions;
+    totalCodeReviews += cc.totalPullRequestReviewContributions;
+    privateContributions += cc.restrictedContributionsCount;
+    allWeeks.push(...(cc.contributionCalendar?.weeks ?? []));
+  }
+
+  const lastYearResult = results[results.length - 1];
+  const contributionsLastYear = lastYearResult?.contributionCalendar?.totalContributions ?? 0;
+
+  const aggregated = {
+    totalCommits,
+    totalPRs,
+    totalIssuesOpened,
+    totalCodeReviews,
+    privateContributions,
+    contributionsLastYear,
+    allWeeks,
+  };
+
+  cache.set(cacheKey, aggregated, 1800);
+  return aggregated;
 }
 
 
@@ -412,9 +518,7 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
 
   const avatarBase64 = await fetchAvatarBase64(restUser.avatar_url);
 
-  const gqlUser = gqlData?.user;
-  const cc = gqlUser?.contributionsCollection;
-  const gqlNodes = gqlUser?.repositories?.nodes ?? undefined;
+  const gqlNodes = gqlData?.user?.repositories?.nodes ?? undefined;
   
   const ownRepos = repos.filter((r) => !r.fork);
   const totalStars = ownRepos.reduce((s, r) => s + r.stargazers_count, 0);
@@ -422,16 +526,19 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   const totalWatchers = ownRepos.reduce((s, r) => s + r.watchers_count, 0);
   const totalOpenIssues = ownRepos.reduce((s, r) => s + r.open_issues_count, 0);
 
-  const totalCommits = (cc?.totalCommitContributions ?? 0) + (cc?.restrictedContributionsCount ?? 0);
-  const totalPRs = cc?.totalPullRequestContributions ?? 0;
-  const totalIssuesOpened = cc?.totalIssueContributions ?? 0;
-  const totalCodeReviews = cc?.totalPullRequestReviewContributions ?? 0;
-  const totalDiscussions = 0;
-  const contributionsLastYear = cc?.contributionCalendar?.totalContributions ?? 0;
-  const privateContributions = cc?.restrictedContributionsCount ?? 0;
+  const {
+    totalCommits,
+    totalPRs,
+    totalIssuesOpened,
+    totalCodeReviews,
+    privateContributions,
+    contributionsLastYear,
+    allWeeks,
+  } = await fetchAllYearsContributions(username, restUser.created_at);
 
-  const weeks = cc?.contributionCalendar?.weeks ?? [];
-  const { longest: longestStreak, current: currentStreak } = calcStreaks(weeks);
+  const totalDiscussions = 0;
+
+  const { longest: longestStreak, current: currentStreak } = calcStreaks(allWeeks);
 
   const topLanguages = aggregateLanguages(repos, gqlNodes);
 
@@ -478,3 +585,4 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
     hasToken: Boolean(TOKEN),
   };
 }
+
