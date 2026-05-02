@@ -661,7 +661,12 @@ const themes: Record<string, Theme> = {
 export const DEFAULT_THEME = "dark";
 
 export function getTheme(name: string, borderRadiusOverride?: number): Theme {
-  const theme = themes[name] ?? themes[DEFAULT_THEME];
+  const resolvedName =
+    name === "random"
+      ? THEME_NAMES[Math.floor(Math.random() * THEME_NAMES.length)]
+      : name;
+
+  const theme = themes[resolvedName] ?? themes[DEFAULT_THEME];
   if (borderRadiusOverride !== undefined) {
     return { ...theme, borderRadius: borderRadiusOverride };
   }
@@ -669,4 +674,5 @@ export function getTheme(name: string, borderRadiusOverride?: number): Theme {
 }
 
 export const THEME_NAMES = Object.keys(themes);
+
 
