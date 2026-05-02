@@ -3,13 +3,6 @@ import { fetchGitHubUser } from "../lib/github.js";
 import { getTheme, THEME_NAMES } from "../themes/index.js";
 import { renderStatsCard, renderErrorCard } from "../utils/svgBuilder.js";
 import { sanitizeUsername, sanitizeTheme, parseHideList, clamp } from "../utils/sanitize.js";
-import { rateLimiter } from "../lib/rateLimit.js";
-
-function getClientIP(req: VercelRequest): string {
-  const fwd = req.headers["x-forwarded-for"];
-  if (typeof fwd === "string") return fwd.split(",")[0].trim();
-  return req.socket?.remoteAddress ?? "unknown";
-}
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (req.method === "OPTIONS") {
@@ -29,9 +22,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400");
   res.setHeader("X-Content-Type-Options", "nosniff");
 
+  // Allow "random" through — getTheme handles it; otherwise validate against known themes
   const themeRaw = typeof req.query["theme"] === "string" ? req.query["theme"] : "dark";
-  const themeName = THEME_NAMES.includes(sanitizeTheme(themeRaw))
-    ? sanitizeTheme(themeRaw)
+  const sanitized = sanitizeTheme(themeRaw);
+  const themeName = sanitized === "random" || THEME_NAMES.includes(sanitized)
+    ? sanitized
     : "dark";
 
   const brRaw = req.query["border_radius"];
@@ -47,14 +42,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).send(renderErrorCard(msg, theme, br));
   }
 
-  
-  const ip = getClientIP(req);
-  if (!rateLimiter.isAllowed(ip)) {
-    sendError("Rate limit exceeded — please wait a minute and try again.");
-    return;
-  }
-
-
   const rawUsername = req.query["username"];
   if (!rawUsername || typeof rawUsername !== "string" || rawUsername.trim() === "") {
     sendError("Missing required parameter: ?username=<github_username>");
@@ -68,7 +55,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     sendError("Invalid GitHub username format (only a-z, 0-9, and hyphens allowed).");
     return;
   }
-
 
   const hideRaw = typeof req.query["hide"] === "string" ? req.query["hide"] : "";
   const hideStats = parseHideList(hideRaw);
@@ -86,15 +72,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const hideStreakEmoji = hideStreakEmojiRaw === "true" || hideStreakEmojiRaw === "1";
 
 //  const hideStatChartsRaw = req.query["hide_stat_charts"];
- // const hideStatCharts = hideStatChartsRaw === "true" || hideStatChartsRaw === "1";
+//  const hideStatCharts = hideStatChartsRaw === "true" || hideStatChartsRaw === "1";
 
   const sectionSpacingRaw = req.query["section_spacing"];
   const sectionSpacing = typeof sectionSpacingRaw === "string" && sectionSpacingRaw !== ""
     ? clamp(parseInt(sectionSpacingRaw, 10) || 0, 0, 40)
     : 0;
 
-
-  
   try {
     const user = await fetchGitHubUser(username);
 
