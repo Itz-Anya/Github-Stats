@@ -476,10 +476,18 @@ html, body {
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>
+  // Force classic JSX runtime so Babel doesn't emit `import` statements
+  // (the automatic runtime emits `import { jsx } from "react/jsx-runtime"`
+  //  which breaks in-browser <script> execution).
+  Babel.registerPreset('react-classic', {
+    presets: [[Babel.availablePresets['react'], { runtime: 'classic' }]]
+  });
+</script>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-<script type="text/babel" data-presets="react">
+<script type="text/babel" data-presets="react-classic">
 const { useState, useEffect, useRef, useMemo, memo } = React;
 
 
