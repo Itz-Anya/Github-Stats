@@ -22,7 +22,7 @@ const themes: Record<string, Theme> = {
   // ── Dark developer themes ─────────────────────────────────────────────────
   dark: {
     background: "#0d1117", border: "#30363d",
-    titleColor: "#e6edf3", textColor: "#ffffff", subTextColor: "#8b949e",
+    titleColor: "#e6edf3", textColor: "#ffffff", subTextColor: "#8594a4",
     iconColor: "#58a6ff", statValueColor: "#58a6ff",
     accentColor: "#58a6ff", accentSecondary: "#3fb950",
     barBackground: "#21262d", barFill: ["#58a6ff", "#3fb950"],
@@ -31,7 +31,7 @@ const themes: Record<string, Theme> = {
   },
   github_dark: {
     background: "#161b22", border: "#21262d",
-    titleColor: "#e6edf3", textColor: "#ffffff", subTextColor: "#8b949e",
+    titleColor: "#e6edf3", textColor: "#ffffff", subTextColor: "#8594a4",
     iconColor: "#3fb950", statValueColor: "#58a6ff",
     accentColor: "#3fb950", accentSecondary: "#58a6ff",
     barBackground: "#0d1117", barFill: ["#3fb950", "#58a6ff"],
@@ -41,7 +41,7 @@ const themes: Record<string, Theme> = {
   tokyonight: {
     background: "#1a1b27", backgroundGradient: ["#1a1b27", "#16161e"],
     border: "#414868",
-    titleColor: "#c0caf5", textColor: "#ffffff", subTextColor: "#565f89",
+    titleColor: "#c0caf5", textColor: "#ffffff", subTextColor: "#7880a4",
     iconColor: "#7aa2f7", statValueColor: "#bb9af7",
     accentColor: "#7aa2f7", accentSecondary: "#9ece6a",
     barBackground: "#16161e", barFill: ["#7aa2f7", "#bb9af7"],
@@ -50,7 +50,7 @@ const themes: Record<string, Theme> = {
   },
   dracula: {
     background: "#282a36", border: "#44475a",
-    titleColor: "#f8f8f2", textColor: "#ffffff", subTextColor: "#6272a4",
+    titleColor: "#f8f8f2", textColor: "#ffffff", subTextColor: "#838eb1",
     iconColor: "#50fa7b", statValueColor: "#ff79c6",
     accentColor: "#bd93f9", accentSecondary: "#50fa7b",
     barBackground: "#1e1f29", barFill: ["#bd93f9", "#ff79c6"],
@@ -60,7 +60,7 @@ const themes: Record<string, Theme> = {
   nord: {
     background: "#2e3440", backgroundGradient: ["#2e3440", "#272c36"],
     border: "#3b4252",
-    titleColor: "#eceff4", textColor: "#ffffff", subTextColor: "#4c566a",
+    titleColor: "#eceff4", textColor: "#ffffff", subTextColor: "#8993a8",
     iconColor: "#88c0d0", statValueColor: "#81a1c1",
     accentColor: "#88c0d0", accentSecondary: "#a3be8c",
     barBackground: "#272c36", barFill: ["#88c0d0", "#81a1c1"],
@@ -69,7 +69,7 @@ const themes: Record<string, Theme> = {
   },
   solarized: {
     background: "#002b36", border: "#073642",
-    titleColor: "#93a1a1", textColor: "#ffffff", subTextColor: "#586e75",
+    titleColor: "#93a1a1", textColor: "#ffffff", subTextColor: "#738f97",
     iconColor: "#268bd2", statValueColor: "#b58900",
     accentColor: "#2aa198", accentSecondary: "#859900",
     barBackground: "#073642", barFill: ["#268bd2", "#2aa198"],
@@ -78,7 +78,7 @@ const themes: Record<string, Theme> = {
   },
   monokai: {
     background: "#272822", border: "#3e3d32",
-    titleColor: "#f8f8f2", textColor: "#ffffff", subTextColor: "#75715e",
+    titleColor: "#f8f8f2", textColor: "#ffffff", subTextColor: "#938d6d",
     iconColor: "#a6e22e", statValueColor: "#66d9e8",
     accentColor: "#f92672", accentSecondary: "#a6e22e",
     barBackground: "#1e1f1a", barFill: ["#f92672", "#a6e22e"],
@@ -88,7 +88,7 @@ const themes: Record<string, Theme> = {
   cyberpunk: {
     background: "#0d0221", backgroundGradient: ["#0d0221", "#120429"],
     border: "#ff00ff",
-    titleColor: "#00ffff", textColor: "#ffffff", subTextColor: "#8080c0",
+    titleColor: "#00ffff", textColor: "#ffffff", subTextColor: "#8585bb",
     iconColor: "#ff00ff", statValueColor: "#00ffff",
     accentColor: "#ff00ff", accentSecondary: "#00ffff",
     barBackground: "#1a0535", barFill: ["#ff00ff", "#00ffff"],
@@ -98,7 +98,7 @@ const themes: Record<string, Theme> = {
   midnight: {
     background: "#0a0e1a", backgroundGradient: ["#0a0e1a", "#0d1326"],
     border: "#1a2236",
-    titleColor: "#e2e8f0", textColor: "#ffffff", subTextColor: "#475569",
+    titleColor: "#e2e8f0", textColor: "#ffffff", subTextColor: "#6a7b93",
     iconColor: "#818cf8", statValueColor: "#a78bfa",
     accentColor: "#818cf8", accentSecondary: "#34d399",
     barBackground: "#0d1326", barFill: ["#818cf8", "#a78bfa"],
@@ -108,7 +108,7 @@ const themes: Record<string, Theme> = {
   ocean_dark: {
     background: "#1b2b34", backgroundGradient: ["#1b2b34", "#141f26"],
     border: "#2b3d4f",
-    titleColor: "#cdd3de", textColor: "#ffffff", subTextColor: "#65737e",
+    titleColor: "#cdd3de", textColor: "#ffffff", subTextColor: "#778b9a",
     iconColor: "#6699cc", statValueColor: "#c594c5",
     accentColor: "#6699cc", accentSecondary: "#99c794",
     barBackground: "#141f26", barFill: ["#6699cc", "#c594c5"],
@@ -118,7 +118,7 @@ const themes: Record<string, Theme> = {
   neon_dreams: {
     background: "#080815", backgroundGradient: ["#080815", "#0c0c1f"],
     border: "#00f5d4",
-    titleColor: "#ffffff", textColor: "#ffffff", subTextColor: "#7070b0",
+    titleColor: "#ffffff", textColor: "#ffffff", subTextColor: "#7575ab",
     iconColor: "#00f5d4", statValueColor: "#f5a623",
     accentColor: "#00f5d4", accentSecondary: "#f5a623",
     barBackground: "#0c0c1f", barFill: ["#00f5d4", "#f5a623"],
@@ -128,7 +128,7 @@ const themes: Record<string, Theme> = {
   galaxy: {
     background: "#0b0019", backgroundGradient: ["#0b0019", "#14002e"],
     border: "#3d1f6e",
-    titleColor: "#f0e6ff", textColor: "#ffffff", subTextColor: "#8b5cf6",
+    titleColor: "#f0e6ff", textColor: "#ffffff", subTextColor: "#9068ea",
     iconColor: "#a78bfa", statValueColor: "#c084fc",
     accentColor: "#8b5cf6", accentSecondary: "#f472b6",
     barBackground: "#14002e", barFill: ["#8b5cf6", "#f472b6"],
@@ -138,7 +138,7 @@ const themes: Record<string, Theme> = {
   aurora: {
     background: "#0f1923", backgroundGradient: ["#0f1923", "#0a1520"],
     border: "#1e3a4a",
-    titleColor: "#e0f7fa", textColor: "#ffffff", subTextColor: "#4dd0e1",
+    titleColor: "#e0f7fa", textColor: "#ffffff", subTextColor: "#58c7d6",
     iconColor: "#80cbc4", statValueColor: "#b39ddb",
     accentColor: "#4dd0e1", accentSecondary: "#ce93d8",
     barBackground: "#0a1520", barFill: ["#4dd0e1", "#ce93d8"],
@@ -260,7 +260,7 @@ const themes: Record<string, Theme> = {
   starlight: {
     background: "#0d0d1a", backgroundGradient: ["#0d0d1a", "#12122a"],
     border: "#2a2a5a",
-    titleColor: "#fff9e6", textColor: "#ffffff", subTextColor: "#7070aa",
+    titleColor: "#fff9e6", textColor: "#ffffff", subTextColor: "#7474a6",
     iconColor: "#ffd700", statValueColor: "#ffb347",
     accentColor: "#ffd700", accentSecondary: "#ff69b4",
     barBackground: "#12122a", barFill: ["#ffd700", "#ff69b4"],
@@ -270,7 +270,7 @@ const themes: Record<string, Theme> = {
   cherry_blossom: {
     background: "#1a0010", backgroundGradient: ["#1a0010", "#230015"],
     border: "#6b1535",
-    titleColor: "#ffb3d9", textColor: "#ffffff", subTextColor: "#99334d",
+    titleColor: "#ffb3d9", textColor: "#ffffff", subTextColor: "#b9516b",
     iconColor: "#ff6699", statValueColor: "#ff99cc",
     accentColor: "#ff6699", accentSecondary: "#cc99ff",
     barBackground: "#230015", barFill: ["#ff6699", "#cc99ff"],
@@ -282,7 +282,7 @@ const themes: Record<string, Theme> = {
   neon_green: {
     background: "#010b01", backgroundGradient: ["#010b01", "#011501"],
     border: "#00ff41",
-    titleColor: "#00ff41", textColor: "#ffffff", subTextColor: "#1a7a1a",
+    titleColor: "#00ff41", textColor: "#ffffff", subTextColor: "#288b28",
     iconColor: "#00ff41", statValueColor: "#39ff14",
     accentColor: "#00ff41", accentSecondary: "#00ccff",
     barBackground: "#011501", barFill: ["#00ff41", "#39ff14"],
@@ -292,7 +292,7 @@ const themes: Record<string, Theme> = {
   neon_pink: {
     background: "#0d0010", backgroundGradient: ["#0d0010", "#150018"],
     border: "#ff0090",
-    titleColor: "#ff0090", textColor: "#ffffff", subTextColor: "#7a0040",
+    titleColor: "#ff0090", textColor: "#ffffff", subTextColor: "#d41177",
     iconColor: "#ff0090", statValueColor: "#ff66c4",
     accentColor: "#ff0090", accentSecondary: "#aa00ff",
     barBackground: "#150018", barFill: ["#ff0090", "#aa00ff"],
@@ -302,7 +302,7 @@ const themes: Record<string, Theme> = {
   neon_orange: {
     background: "#0d0500", backgroundGradient: ["#0d0500", "#180800"],
     border: "#ff6600",
-    titleColor: "#ff6600", textColor: "#ffffff", subTextColor: "#7a3000",
+    titleColor: "#ff6600", textColor: "#ffffff", subTextColor: "#b8510f",
     iconColor: "#ff6600", statValueColor: "#ffaa00",
     accentColor: "#ff6600", accentSecondary: "#ffdd00",
     barBackground: "#180800", barFill: ["#ff6600", "#ffaa00"],
@@ -312,7 +312,7 @@ const themes: Record<string, Theme> = {
   neon_blue: {
     background: "#00010d", backgroundGradient: ["#00010d", "#000318"],
     border: "#0066ff",
-    titleColor: "#4da6ff", textColor: "#ffffff", subTextColor: "#1a3d7a",
+    titleColor: "#4da6ff", textColor: "#ffffff", subTextColor: "#396dc6",
     iconColor: "#0066ff", statValueColor: "#66b3ff",
     accentColor: "#0066ff", accentSecondary: "#00ccff",
     barBackground: "#000318", barFill: ["#0066ff", "#00ccff"],
@@ -322,7 +322,7 @@ const themes: Record<string, Theme> = {
   neon_purple: {
     background: "#07000f", backgroundGradient: ["#07000f", "#0e0018"],
     border: "#9900ff",
-    titleColor: "#cc66ff", textColor: "#ffffff", subTextColor: "#4d007a",
+    titleColor: "#cc66ff", textColor: "#ffffff", subTextColor: "#a426ed",
     iconColor: "#9900ff", statValueColor: "#cc66ff",
     accentColor: "#9900ff", accentSecondary: "#ff00cc",
     barBackground: "#0e0018", barFill: ["#9900ff", "#ff00cc"],
@@ -332,7 +332,7 @@ const themes: Record<string, Theme> = {
   neon_red: {
     background: "#0d0000", backgroundGradient: ["#0d0000", "#180000"],
     border: "#ff0033",
-    titleColor: "#ff3366", textColor: "#ffffff", subTextColor: "#7a001a",
+    titleColor: "#ff3366", textColor: "#ffffff", subTextColor: "#e2123f",
     iconColor: "#ff0033", statValueColor: "#ff6680",
     accentColor: "#ff0033", accentSecondary: "#ff6600",
     barBackground: "#180000", barFill: ["#ff0033", "#ff6600"],
@@ -343,7 +343,7 @@ const themes: Record<string, Theme> = {
   // ── Ultra Dark / Black themes ─────────────────────────────────────────────
   obsidian: {
     background: "#020202", border: "#1a1a1a",
-    titleColor: "#d4d4d4", textColor: "#ffffff", subTextColor: "#404040",
+    titleColor: "#d4d4d4", textColor: "#ffffff", subTextColor: "#6e6e6e",
     iconColor: "#888888", statValueColor: "#c0c0c0",
     accentColor: "#666666", accentSecondary: "#888888",
     barBackground: "#111111", barFill: ["#666666", "#999999"],
@@ -353,7 +353,7 @@ const themes: Record<string, Theme> = {
   black_ice: {
     background: "#000000", backgroundGradient: ["#000000", "#050510"],
     border: "#1a1a2e",
-    titleColor: "#e0e8ff", textColor: "#ffffff", subTextColor: "#303050",
+    titleColor: "#e0e8ff", textColor: "#ffffff", subTextColor: "#6b6b9f",
     iconColor: "#5566cc", statValueColor: "#7788ee",
     accentColor: "#334499", accentSecondary: "#2244bb",
     barBackground: "#050510", barFill: ["#334499", "#5566cc"],
@@ -362,7 +362,7 @@ const themes: Record<string, Theme> = {
   },
   pitch_dark: {
     background: "#000000", border: "#0d0d0d",
-    titleColor: "#ffffff", textColor: "#ffffff", subTextColor: "#333333",
+    titleColor: "#ffffff", textColor: "#ffffff", subTextColor: "#707070",
     iconColor: "#555555", statValueColor: "#aaaaaa",
     accentColor: "#222222", accentSecondary: "#444444",
     barBackground: "#080808", barFill: ["#333333", "#666666"],
@@ -374,7 +374,7 @@ const themes: Record<string, Theme> = {
   emerald: {
     background: "#0a1f14", backgroundGradient: ["#0a1f14", "#071510"],
     border: "#134d2a",
-    titleColor: "#a7f3d0", textColor: "#ffffff", subTextColor: "#065f46",
+    titleColor: "#a7f3d0", textColor: "#ffffff", subTextColor: "#148e6c",
     iconColor: "#34d399", statValueColor: "#10b981",
     accentColor: "#059669", accentSecondary: "#34d399",
     barBackground: "#071510", barFill: ["#059669", "#34d399"],
@@ -384,7 +384,7 @@ const themes: Record<string, Theme> = {
   sapphire: {
     background: "#030c1a", backgroundGradient: ["#030c1a", "#051426"],
     border: "#0a2d5c",
-    titleColor: "#bfdbfe", textColor: "#ffffff", subTextColor: "#1e3a5f",
+    titleColor: "#bfdbfe", textColor: "#ffffff", subTextColor: "#4574b2",
     iconColor: "#3b82f6", statValueColor: "#60a5fa",
     accentColor: "#1d4ed8", accentSecondary: "#3b82f6",
     barBackground: "#051426", barFill: ["#1d4ed8", "#60a5fa"],
@@ -394,7 +394,7 @@ const themes: Record<string, Theme> = {
   ruby: {
     background: "#1a0308", backgroundGradient: ["#1a0308", "#23040b"],
     border: "#5c0a1a",
-    titleColor: "#fecdd3", textColor: "#ffffff", subTextColor: "#5c1a26",
+    titleColor: "#fecdd3", textColor: "#ffffff", subTextColor: "#c04f63",
     iconColor: "#f43f5e", statValueColor: "#fb7185",
     accentColor: "#e11d48", accentSecondary: "#f43f5e",
     barBackground: "#23040b", barFill: ["#e11d48", "#f43f5e"],
@@ -404,7 +404,7 @@ const themes: Record<string, Theme> = {
   amber_glow: {
     background: "#1a0f00", backgroundGradient: ["#1a0f00", "#231500"],
     border: "#5c3600",
-    titleColor: "#fde68a", textColor: "#ffffff", subTextColor: "#5c3600",
+    titleColor: "#fde68a", textColor: "#ffffff", subTextColor: "#aa690e",
     iconColor: "#f59e0b", statValueColor: "#fbbf24",
     accentColor: "#d97706", accentSecondary: "#f59e0b",
     barBackground: "#231500", barFill: ["#d97706", "#fbbf24"],
@@ -414,7 +414,7 @@ const themes: Record<string, Theme> = {
   velvet: {
     background: "#1a0a1a", backgroundGradient: ["#1a0a1a", "#230d23"],
     border: "#4d1a4d",
-    titleColor: "#e9d5ff", textColor: "#ffffff", subTextColor: "#4d1a4d",
+    titleColor: "#e9d5ff", textColor: "#ffffff", subTextColor: "#b54bb5",
     iconColor: "#a855f7", statValueColor: "#c084fc",
     accentColor: "#7c3aed", accentSecondary: "#a855f7",
     barBackground: "#230d23", barFill: ["#7c3aed", "#c084fc"],
@@ -424,7 +424,7 @@ const themes: Record<string, Theme> = {
   golden_hour: {
     background: "#1a1000", backgroundGradient: ["#1a1000", "#231800"],
     border: "#5c4200",
-    titleColor: "#fef3c7", textColor: "#ffffff", subTextColor: "#5c4200",
+    titleColor: "#fef3c7", textColor: "#ffffff", subTextColor: "#9c730d",
     iconColor: "#f59e0b", statValueColor: "#fcd34d",
     accentColor: "#b45309", accentSecondary: "#d97706",
     barBackground: "#231800", barFill: ["#d97706", "#fcd34d"],
@@ -486,7 +486,7 @@ const themes: Record<string, Theme> = {
   },
   minimal_dark: {
     background: "#1a1a1a", border: "#2a2a2a",
-    titleColor: "#f0f0f0", textColor: "#ffffff", subTextColor: "#666666",
+    titleColor: "#f0f0f0", textColor: "#ffffff", subTextColor: "#7d7d7d",
     iconColor: "#aaaaaa", statValueColor: "#e0e0e0",
     accentColor: "#888888", accentSecondary: "#aaaaaa",
     barBackground: "#242424", barFill: ["#888888", "#cccccc"],
@@ -513,7 +513,7 @@ const themes: Record<string, Theme> = {
   },
   mono_slate: {
     background: "#1e2030", border: "#2a2d3e",
-    titleColor: "#c8ccd4", textColor: "#ffffff", subTextColor: "#50566a",
+    titleColor: "#c8ccd4", textColor: "#ffffff", subTextColor: "#79829c",
     iconColor: "#7a8099", statValueColor: "#a8acb8",
     accentColor: "#5c6280", accentSecondary: "#7a8099",
     barBackground: "#252840", barFill: ["#5c6280", "#8a90aa"],
@@ -525,7 +525,7 @@ const themes: Record<string, Theme> = {
   retro_terminal: {
     background: "#0a0e00", backgroundGradient: ["#0a0e00", "#0d1200"],
     border: "#2a4a00",
-    titleColor: "#33ff00", textColor: "#ffffff", subTextColor: "#115500",
+    titleColor: "#33ff00", textColor: "#ffffff", subTextColor: "#24870b",
     iconColor: "#33ff00", statValueColor: "#44ee22",
     accentColor: "#22aa00", accentSecondary: "#33ff00",
     barBackground: "#0d1200", barFill: ["#22aa00", "#44ee22"],
@@ -535,7 +535,7 @@ const themes: Record<string, Theme> = {
   amber_crt: {
     background: "#110a00", backgroundGradient: ["#110a00", "#180e00"],
     border: "#4a2800",
-    titleColor: "#ffb000", textColor: "#ffffff", subTextColor: "#663300",
+    titleColor: "#ffb000", textColor: "#ffffff", subTextColor: "#b3610f",
     iconColor: "#ffb000", statValueColor: "#ddaa00",
     accentColor: "#cc7700", accentSecondary: "#ffaa00",
     barBackground: "#180e00", barFill: ["#cc7700", "#ffb000"],
@@ -545,7 +545,7 @@ const themes: Record<string, Theme> = {
   vaporwave: {
     background: "#1a0533", backgroundGradient: ["#1a0533", "#0d0a2e"],
     border: "#ff71ce",
-    titleColor: "#ff71ce", textColor: "#ffffff", subTextColor: "#6a3080",
+    titleColor: "#ff71ce", textColor: "#ffffff", subTextColor: "#a162b9",
     iconColor: "#05d9e8", statValueColor: "#ff71ce",
     accentColor: "#ff71ce", accentSecondary: "#05d9e8",
     barBackground: "#0d0a2e", barFill: ["#ff71ce", "#05d9e8"],
@@ -555,7 +555,7 @@ const themes: Record<string, Theme> = {
   outrun: {
     background: "#05051a", backgroundGradient: ["#05051a", "#0a0530"],
     border: "#ff2079",
-    titleColor: "#ff2079", textColor: "#ffffff", subTextColor: "#5a1a50",
+    titleColor: "#ff2079", textColor: "#ffffff", subTextColor: "#ba43a8",
     iconColor: "#ffd319", statValueColor: "#ff2079",
     accentColor: "#ff2079", accentSecondary: "#ffd319",
     barBackground: "#0a0530", barFill: ["#ff2079", "#ffd319"],
@@ -567,7 +567,7 @@ const themes: Record<string, Theme> = {
   forest: {
     background: "#0a1a0a", backgroundGradient: ["#0a1a0a", "#0e220e"],
     border: "#1a3d1a",
-    titleColor: "#a8d5a2", textColor: "#ffffff", subTextColor: "#2d5c2d",
+    titleColor: "#a8d5a2", textColor: "#ffffff", subTextColor: "#4c8a4c",
     iconColor: "#5aaa55", statValueColor: "#78cc70",
     accentColor: "#3d8a3d", accentSecondary: "#5aaa55",
     barBackground: "#0e220e", barFill: ["#3d8a3d", "#5aaa55"],
@@ -577,7 +577,7 @@ const themes: Record<string, Theme> = {
   desert: {
     background: "#1a1205", backgroundGradient: ["#1a1205", "#231a08"],
     border: "#5c4a1a",
-    titleColor: "#f5deb3", textColor: "#ffffff", subTextColor: "#8b6914",
+    titleColor: "#f5deb3", textColor: "#ffffff", subTextColor: "#9b7922",
     iconColor: "#cd853f", statValueColor: "#daa520",
     accentColor: "#b8860b", accentSecondary: "#cd853f",
     barBackground: "#231a08", barFill: ["#b8860b", "#daa520"],
@@ -597,7 +597,7 @@ const themes: Record<string, Theme> = {
   deep_sea: {
     background: "#000d1a", backgroundGradient: ["#000d1a", "#001326"],
     border: "#003355",
-    titleColor: "#80d4ff", textColor: "#ffffff", subTextColor: "#1a4466",
+    titleColor: "#80d4ff", textColor: "#ffffff", subTextColor: "#3a7cb1",
     iconColor: "#00aaff", statValueColor: "#55ccff",
     accentColor: "#0077cc", accentSecondary: "#00aaff",
     barBackground: "#001326", barFill: ["#0077cc", "#00aaff"],
@@ -607,7 +607,7 @@ const themes: Record<string, Theme> = {
   sunset: {
     background: "#1a0505", backgroundGradient: ["#1a0505", "#2d0a0a"],
     border: "#661a00",
-    titleColor: "#ffd0a0", textColor: "#ffffff", subTextColor: "#884422",
+    titleColor: "#ffd0a0", textColor: "#ffffff", subTextColor: "#af6039",
     iconColor: "#ff6633", statValueColor: "#ff8855",
     accentColor: "#cc4400", accentSecondary: "#ff8833",
     barBackground: "#2d0a0a", barFill: ["#cc4400", "#ff6633"],
@@ -619,7 +619,7 @@ const themes: Record<string, Theme> = {
   rainbow_dark: {
     background: "#0a0010", backgroundGradient: ["#0a0010", "#100015"],
     border: "#330055",
-    titleColor: "#ff99cc", textColor: "#ffffff", subTextColor: "#443366",
+    titleColor: "#ff99cc", textColor: "#ffffff", subTextColor: "#7f68ab",
     iconColor: "#ff6699", statValueColor: "#99ccff",
     accentColor: "#cc33ff", accentSecondary: "#ff6699",
     barBackground: "#100015", barFill: ["#cc33ff", "#ff6699"],
@@ -639,7 +639,7 @@ const themes: Record<string, Theme> = {
   tropical: {
     background: "#003322", backgroundGradient: ["#003322", "#004433"],
     border: "#006644",
-    titleColor: "#aaffcc", textColor: "#ffffff", subTextColor: "#226644",
+    titleColor: "#aaffcc", textColor: "#ffffff", subTextColor: "#41a272",
     iconColor: "#00ff88", statValueColor: "#55ffaa",
     accentColor: "#00cc66", accentSecondary: "#ffdd00",
     barBackground: "#004433", barFill: ["#00cc66", "#ffdd00"],
@@ -649,7 +649,7 @@ const themes: Record<string, Theme> = {
   cosmic: {
     background: "#050010", backgroundGradient: ["#050010", "#0a0020"],
     border: "#220044",
-    titleColor: "#e0bbff", textColor: "#ffffff", subTextColor: "#442266",
+    titleColor: "#e0bbff", textColor: "#ffffff", subTextColor: "#8957bb",
     iconColor: "#aa55ff", statValueColor: "#cc88ff",
     accentColor: "#8800ff", accentSecondary: "#ff44aa",
     barBackground: "#0a0020", barFill: ["#8800ff", "#ff44aa"],
@@ -675,5 +675,4 @@ export function getTheme(name: string, borderRadiusOverride?: number): Theme {
 }
 
 export const THEME_NAMES = Object.keys(themes);
-
 
