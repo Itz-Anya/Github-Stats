@@ -203,27 +203,27 @@ html, body {
 
 .about-btn {
   position: fixed;
-  top: 9px;
-  left: 12px;
+  top: 10px;
+  right: 14px;
   z-index: 9000;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  
-  background: transparent;
+  border: 1px solid var(--border);
+  background: oklch(1 0.005 340 / 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: grid;
   place-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 16px -4px oklch(0.72 0.17 350 / 0.28);
+  box-shadow: 0 4px 16px -4px oklch(0.72 0.17 350 / 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   color: var(--sakura-deep);
 }
 .about-btn:hover {
-  transform: scale(1.1);
-  
-  box-shadow: 0 6px 22px -4px oklch(0.72 0.17 350 / 0.38);
+  transform: scale(1.08);
+  background: var(--card);
+  box-shadow: 0 6px 22px -4px oklch(0.72 0.17 350 / 0.35);
 }
 .about-btn i { font-size: 20px; line-height: 1; }
 
@@ -415,12 +415,6 @@ html, body {
 </head>
 <body>
 <div id="root"></div>
-
-
-<button class="about-btn" id="aboutBtn" aria-label="About this app" title="About">
-  <i class='bx bx-info-circle'></i>
-</button>
-
 
 <div class="about-overlay-backdrop" id="aboutOverlay" role="dialog" aria-modal="true" aria-label="About GitHub Stats Generator">
   <div class="about-card">
@@ -988,134 +982,165 @@ function CustomizeStep({ username, onChangeUser }) {
   const markdown = `![${state.username}'s GitHub Stats](${finalUrl})`;
   const html = `<a href="https://github.com/${state.username}"><img src="${finalUrl}" alt="${state.username}'s GitHub Stats" /></a>`;
 
+  const openAbout = () => {
+    const overlay = document.getElementById('aboutOverlay');
+    if (overlay) {
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
   return (
     <section className="animate-slide-up flex min-h-[100svh] flex-col">
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b px-5 py-3 backdrop-blur-xl sm:px-8" style={{ borderColor: 'var(--border)', background: 'oklch(0.985 0.012 350 / 0.7)' }}>
-
-        <div className="flex items-center gap-2">
-          
-        		
-        	
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b px-5 py-4 backdrop-blur-xl sm:px-8" style={{ borderColor: 'var(--border)', background: 'oklch(0.985 0.012 350 / 0.8)' }}>
+        <div className="flex items-center gap-3">
+          <span className="font-display font-bold text-lg tracking-tight text-foreground sm:text-xl">
+            GitHub <span className="gradient-text">Stats</span>
+          </span>
+          <span className="hidden sm:inline-flex rounded-full border bg-[color:var(--sakura-soft)]/70 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-muted-foreground font-medium" style={{ borderColor: 'var(--border)' }}>
+            Card Generator
+          </span>
         </div>
-        <button onClick={onChangeUser}
-          className="inline-flex items-center gap-1.5 rounded-full border bg-card/60 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-muted-foreground transition-all hover:text-foreground"
-          style={{ borderColor: 'var(--border)' }}>
-          <Icon name="arrow-left" size={12} /> Change user
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button onClick={onChangeUser}
+            className="inline-flex items-center gap-2 rounded-xl border bg-card/70 px-3.5 py-2 font-mono text-[0.74rem] uppercase tracking-wider text-muted-foreground transition-all hover:text-foreground hover:bg-card hover:shadow-sm active:scale-95"
+            style={{ borderColor: 'var(--border)' }}>
+            <Icon name="arrow-left" size={13} /> Change user
+          </button>
+          <button onClick={openAbout}
+            aria-label="About this app"
+            title="About GitHub Stats"
+            className="inline-flex items-center justify-center h-[37px] w-[37px] rounded-xl border bg-card/70 text-muted-foreground transition-all hover:text-[color:var(--sakura-deep)] hover:bg-card hover:shadow-sm active:scale-95"
+            style={{ borderColor: 'var(--border)' }}>
+            <Icon name="info" size={16} />
+          </button>
+        </div>
       </header>
 
-      <div className="px-5 py-6 sm:px-8">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">✿ @{state.username}</span>
-          <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">{state.theme.replace(/_/g, " ")}</span>
-        </div>
-        <div className="card-shimmer relative rounded-2xl p-[3px]" style={{ boxShadow: 'var(--shadow-glow)' }}>
-          <div className="relative flex min-h-[180px] items-center justify-center overflow-hidden rounded-[14px] bg-card">
-            {status === "loading" && <div className="skeleton-shimmer absolute inset-0 rounded-[14px]" />}
-            {status === "error" && (
-              <div className="p-6 text-center text-sm text-muted-foreground">
-                <Icon name="image" size={28} /><br />
-                Could not load stats.<br />Check the username and try again.
+      {/* Main 2-column layout */}
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
+          
+          {/* LEFT COLUMN: Controls & Customization */}
+          <div className="space-y-6 lg:col-span-7">
+            <ThemePanel state={state} update={update} />
+
+            <Panel label="Options" icon={<Icon name="layout-grid" size={12} />}>
+              <ToggleRow label="Show Icons" sub="Display stat icons on card" checked={state.showIcons} onChange={v => update("showIcons", v)} icon={<Icon name={state.showIcons ? "eye" : "eye-off"} size={14} />} />
+              <ToggleRow label="Compact Mode" sub="Smaller, condensed card layout" checked={state.compact} onChange={v => update("compact", v)} icon={<Icon name="layout-grid" size={14} />} />
+              <ToggleRow label="Hide Avatar Ring" sub="Remove the animated ring around avatar" checked={state.hideAvatarRing} onChange={v => update("hideAvatarRing", v)} icon={<Icon name={state.hideAvatarRing ? "eye-off" : "eye"} size={14} />} />
+              <ToggleRow label="Hide Streak Emoji" sub="Remove fire emoji from streak section" checked={state.hideStreakEmoji} onChange={v => update("hideStreakEmoji", v)} icon={<Icon name={state.hideStreakEmoji ? "eye-off" : "eye"} size={14} />} />
+              <ToggleRow label="Hide Stat Charts" sub="Remove mini sparkline charts from stats grid" checked={state.hideStatCharts} onChange={v => update("hideStatCharts", v)} icon={<Icon name={state.hideStatCharts ? "eye-off" : "eye"} size={14} />} />
+            </Panel>
+
+            <Panel label="Section Spacing">
+              <div className="flex items-center gap-3">
+                <input type="range" min={0} max={40} value={state.sectionSpacing}
+                  onChange={e => update("sectionSpacing", parseInt(e.target.value))}
+                  className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
+                <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.sectionSpacing}px</div>
               </div>
-            )}
-            <img key={previewUrl} src={previewUrl} alt={`${state.username}'s GitHub Stats Card`}
-              onLoad={() => setStatus("ready")} onError={() => setStatus("error")}
-              className="block w-full rounded-[14px]"
-              style={{ display: status === "ready" ? "block" : "none" }} />
+            </Panel>
+
+            <Panel label="Hide Sections" icon={<Icon name="eye-off" size={12} />}>
+              <p className="mb-2 font-mono text-[0.65rem] tracking-wide" style={{ color: 'var(--muted-foreground)' }}>Toggle entire sections on/off</p>
+              <div className="flex flex-wrap gap-2">
+                {HIDE_SECTIONS.map(sec => {
+                  const active = state.hiddenSections.has(sec);
+                  const label = sec === "streakinfo" ? "streak" : sec;
+                  return (
+                    <button key={sec} onClick={() => toggleHiddenSection(sec)}
+                      className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
+                      style={{
+                        borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
+                        background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
+                        color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+                      }}>
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </Panel>
+
+            <Panel label="Border Radius">
+              <div className="flex items-center gap-3">
+                <input type="range" min={0} max={28} value={state.borderRadius}
+                  onChange={e => update("borderRadius", parseInt(e.target.value))}
+                  className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
+                <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.borderRadius}</div>
+              </div>
+            </Panel>
+
+            <Panel label="Hide Stats" icon={<Icon name="eye-off" size={12} />}>
+              <div className="flex flex-wrap gap-2">
+                {HIDE_STATS.map(stat => {
+                  const active = state.hidden.has(stat);
+                  return (
+                    <button key={stat} onClick={() => toggleHidden(stat)}
+                      className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
+                      style={{
+                        borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
+                        background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
+                        color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
+                      }}>
+                      {stat}
+                    </button>
+                  );
+                })}
+              </div>
+            </Panel>
           </div>
-        </div>
-      </div>
 
-      <div className="scrollbar-thin flex-1 space-y-7 overflow-y-auto px-5 pb-32 sm:px-8">
-        <ThemePanel state={state} update={update} />
+          {/* RIGHT COLUMN: Sticky Preview & Embed Snippets */}
+          <div className="space-y-6 lg:sticky lg:top-20 lg:col-span-5">
+            {/* Preview Card */}
+            <div>
+              <div className="mb-2.5 flex items-center justify-between">
+                <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">✿ @{state.username}</span>
+                <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground">{state.theme.replace(/_/g, " ")}</span>
+              </div>
+              <div className="card-shimmer relative rounded-2xl p-[3px]" style={{ boxShadow: 'var(--shadow-glow)' }}>
+                <div className="relative flex min-h-[180px] items-center justify-center overflow-hidden rounded-[14px] bg-card">
+                  {status === "loading" && <div className="skeleton-shimmer absolute inset-0 rounded-[14px]" />}
+                  {status === "error" && (
+                    <div className="p-6 text-center text-sm text-muted-foreground">
+                      <Icon name="image" size={28} /><br />
+                      Could not load stats.<br />Check the username and try again.
+                    </div>
+                  )}
+                  <img key={previewUrl} src={previewUrl} alt={`${state.username}'s GitHub Stats Card`}
+                    onLoad={() => setStatus("ready")} onError={() => setStatus("error")}
+                    className="block w-full rounded-[14px]"
+                    style={{ display: status === "ready" ? "block" : "none" }} />
+                </div>
+              </div>
+            </div>
 
-        <Panel label="Options" icon={<Icon name="layout-grid" size={12} />}>
-          <ToggleRow label="Show Icons" sub="Display stat icons on card" checked={state.showIcons} onChange={v => update("showIcons", v)} icon={<Icon name={state.showIcons ? "eye" : "eye-off"} size={14} />} />
-          <ToggleRow label="Compact Mode" sub="Smaller, condensed card layout" checked={state.compact} onChange={v => update("compact", v)} icon={<Icon name="layout-grid" size={14} />} />
-          <ToggleRow label="Hide Avatar Ring" sub="Remove the animated ring around avatar" checked={state.hideAvatarRing} onChange={v => update("hideAvatarRing", v)} icon={<Icon name={state.hideAvatarRing ? "eye-off" : "eye"} size={14} />} />
-          <ToggleRow label="Hide Streak Emoji" sub="Remove fire emoji from streak section" checked={state.hideStreakEmoji} onChange={v => update("hideStreakEmoji", v)} icon={<Icon name={state.hideStreakEmoji ? "eye-off" : "eye"} size={14} />} />
-          <ToggleRow label="Hide Stat Charts" sub="Remove mini sparkline charts from stats grid" checked={state.hideStatCharts} onChange={v => update("hideStatCharts", v)} icon={<Icon name={state.hideStatCharts ? "eye-off" : "eye"} size={14} />} />
-        </Panel>
+            {/* Quick Action Buttons */}
+            <div className="flex gap-2">
+              <button onClick={() => copy("bar-url", finalUrl)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border-[1.5px] bg-card/70 px-4 py-3 font-mono text-[0.75rem] font-medium text-foreground transition-all hover:bg-card"
+                style={{ borderColor: copiedKey === "bar-url" ? 'var(--success)' : 'var(--border)', color: copiedKey === "bar-url" ? 'var(--success)' : 'var(--foreground)' }}>
+                <Icon name={copiedKey === "bar-url" ? "check" : "copy"} size={14} />
+                {copiedKey === "bar-url" ? "Copied URL!" : "Copy URL"}
+              </button>
+              <button onClick={() => copy("bar-md", markdown)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-3 font-display text-[0.8rem] font-bold tracking-wide text-white transition-all hover:-translate-y-0.5"
+                style={{ background: "var(--gradient-sakura)", boxShadow: 'var(--shadow-petal)' }}>
+                <Icon name={copiedKey === "bar-md" ? "check" : "copy"} size={14} />
+                {copiedKey === "bar-md" ? "Copied MD!" : "Copy Markdown"}
+              </button>
+            </div>
 
-        <Panel label="Section Spacing">
-          <div className="flex items-center gap-3">
-            <input type="range" min={0} max={40} value={state.sectionSpacing}
-              onChange={e => update("sectionSpacing", parseInt(e.target.value))}
-              className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
-            <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.sectionSpacing}px</div>
+            {/* Embed Snippets */}
+            <Panel label="Embed Snippets" icon={<Icon name="code" size={12} />}>
+              <Snippet label="Direct URL" value={finalUrl} copied={copiedKey === "url"} onCopy={() => copy("url", finalUrl)} />
+              <Snippet label="Markdown" value={markdown} copied={copiedKey === "md"} onCopy={() => copy("md", markdown)} />
+              <Snippet label="HTML" value={html} copied={copiedKey === "html"} onCopy={() => copy("html", html)} />
+            </Panel>
           </div>
-        </Panel>
 
-        <Panel label="Hide Sections" icon={<Icon name="eye-off" size={12} />}>
-          <p className="mb-2 font-mono text-[0.65rem] tracking-wide" style={{ color: 'var(--muted-foreground)' }}>Toggle entire sections on/off</p>
-          <div className="flex flex-wrap gap-2">
-            {HIDE_SECTIONS.map(sec => {
-              const active = state.hiddenSections.has(sec);
-              const label = sec === "streakinfo" ? "streak" : sec;
-              return (
-                <button key={sec} onClick={() => toggleHiddenSection(sec)}
-                  className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
-                  style={{
-                    borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
-                    background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
-                    color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
-                  }}>
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </Panel>
-
-        <Panel label="Border Radius">
-          <div className="flex items-center gap-3">
-            <input type="range" min={0} max={28} value={state.borderRadius}
-              onChange={e => update("borderRadius", parseInt(e.target.value))}
-              className="flex-1" style={{ height: 6, accentColor: 'var(--sakura-deep)' }} />
-            <div className="min-w-9 rounded-md px-2 py-0.5 text-center font-mono text-xs font-semibold" style={{ background: 'var(--sakura-soft)', color: 'var(--sakura-deep)' }}>{state.borderRadius}</div>
-          </div>
-        </Panel>
-
-        <Panel label="Hide Stats" icon={<Icon name="eye-off" size={12} />}>
-          <div className="flex flex-wrap gap-2">
-            {HIDE_STATS.map(stat => {
-              const active = state.hidden.has(stat);
-              return (
-                <button key={stat} onClick={() => toggleHidden(stat)}
-                  className="rounded-lg border-[1.5px] px-3 py-1.5 font-mono text-[0.7rem] tracking-wide transition-all"
-                  style={{
-                    borderColor: active ? 'var(--sakura-deep)' : 'var(--border)',
-                    background: active ? 'var(--sakura-soft)' : 'oklch(1 0.005 340 / 0.4)',
-                    color: active ? 'var(--sakura-deep)' : 'var(--muted-foreground)',
-                  }}>
-                  {stat}
-                </button>
-              );
-            })}
-          </div>
-        </Panel>
-
-        <Panel label="Embed Snippets" icon={<Icon name="code" size={12} />}>
-          <Snippet label="Direct URL" value={finalUrl} copied={copiedKey === "url"} onCopy={() => copy("url", finalUrl)} />
-          <Snippet label="Markdown" value={markdown} copied={copiedKey === "md"} onCopy={() => copy("md", markdown)} />
-          <Snippet label="HTML" value={html} copied={copiedKey === "html"} onCopy={() => copy("html", html)} />
-        </Panel>
-      </div>
-
-      <div className="fixed bottom-0 left-1/2 z-50 w-full max-w-2xl -translate-x-1/2 border-t px-5 py-3 backdrop-blur-xl sm:px-8" style={{ borderColor: 'var(--border)', background: 'oklch(0.985 0.012 350 / 0.85)' }}>
-        <div className="flex gap-2">
-          <button onClick={() => copy("bar-url", finalUrl)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border-[1.5px] bg-card/60 px-4 py-3 font-mono text-[0.78rem] font-medium text-foreground transition-all"
-            style={{ borderColor: copiedKey === "bar-url" ? 'var(--success)' : 'var(--border)', color: copiedKey === "bar-url" ? 'var(--success)' : 'var(--foreground)' }}>
-            <Icon name={copiedKey === "bar-url" ? "check" : "copy"} size={14} />
-            {copiedKey === "bar-url" ? "Copied!" : "Copy URL"}
-          </button>
-          <button onClick={() => copy("bar-md", markdown)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-3 font-display text-[0.82rem] font-bold tracking-wide text-white transition-all hover:-translate-y-0.5"
-            style={{ background: "var(--gradient-sakura)", boxShadow: 'var(--shadow-petal)' }}>
-            <Icon name={copiedKey === "bar-md" ? "check" : "copy"} size={14} />
-            {copiedKey === "bar-md" ? "Copied!" : "Copy Markdown"}
-          </button>
         </div>
       </div>
     </section>
@@ -1145,7 +1170,7 @@ const CREATORS = [
 
 function CreatorsSection() {
   return (
-    <section className="relative px-5 pb-20 pt-14 sm:px-8">
+    <section className="relative mx-auto w-full max-w-5xl px-5 pb-20 pt-14 sm:px-8">
       <div className="mb-10 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border bg-[color:var(--sakura-soft)]/60 px-4 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.22em] backdrop-blur"
           style={{ borderColor: 'oklch(0.78 0.14 350 / 0.4)', color: 'var(--sakura-deep)' }}>
@@ -1157,7 +1182,7 @@ function CreatorsSection() {
         <p className="mt-2 text-sm text-muted-foreground">The peoples behind the blossom.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
         {CREATORS.map(c => (
           <article key={c.name}
             className="group relative overflow-hidden rounded-3xl border bg-card/70 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 sm:p-6"
@@ -1187,12 +1212,12 @@ function CreatorsSection() {
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <a href={c.github} target="_blank" rel="noopener noreferrer" aria-label={c.githubLabel}
-                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-background"
                 style={{ borderColor: 'var(--border)' }}>
                 <GitHubIcon size={13} /> GitHub
               </a>
               <a href={c.telegram} target="_blank" rel="noopener noreferrer" aria-label={c.telegramLabel}
-                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border bg-background/60 px-3 py-2 text-xs font-medium text-foreground transition-all hover:bg-background"
                 style={{ borderColor: 'var(--border)' }}>
                 <Icon name="send" size={13} /> Telegram
               </a>
@@ -1212,7 +1237,7 @@ function CreatorsSection() {
 function App() {
   const [username, setUsername] = useState(null);
   return (
-    <main className="relative mx-auto min-h-[100svh] w-full max-w-2xl">
+    <main className="relative mx-auto min-h-[100svh] w-full">
       {!username
         ? <HeroStep onSubmit={setUsername} />
         : <><CustomizeStep username={username} onChangeUser={() => setUsername(null)} /><CreatorsSection /></>}
