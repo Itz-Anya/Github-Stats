@@ -19,7 +19,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400");
   res.setHeader("X-Content-Type-Options", "nosniff");
 
   // Allow "random" through — getTheme handles it; otherwise validate against known themes
@@ -28,6 +27,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const themeName = sanitized === "random" || THEME_NAMES.includes(sanitized)
     ? sanitized
     : "dark";
+
+  // Random theme must never be cached, otherwise the same theme is served repeatedly
+  if (themeName === "random") {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.setHeader("CDN-Cache-Control", "no-store");
+    res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  } else {
+    res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400");
+  }
 
   const brRaw = req.query["border_radius"];
   const brOverride =
@@ -111,3 +121,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
   }
 }
+
