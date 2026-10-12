@@ -89,8 +89,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     ? clamp(parseInt(sectionSpacingRaw, 10) || 0, 0, 40)
     : 0;
 
+  const includePrivateRaw = req.query["include_private"];
+  const includePrivate = includePrivateRaw === "true" || includePrivateRaw === "1";
+
   try {
-    const user = await fetchGitHubUser(username);
+    const user = await fetchGitHubUser(username, { includePrivate });
+
+    // ?debug=1 -> JSON breakdown of where the commit numbers come from
+    const debugRaw = req.query["debug"];
+    if (debugRaw === "1" || debugRaw === "true") {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store");
+      res.status(200).send(
+        JSON.stringify({ username, totalCommits: user.totalCommits, ...user.commitBreakdown }, null, 2)
+      );
+      return;
+    }
 
     const svg = renderStatsCard(user, {
       theme,
