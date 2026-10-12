@@ -17,6 +17,24 @@ export interface PinnedRepo {
   url: string;
 }
 
+export interface CommitBreakdown {
+  graphqlCommits: number;
+  searchCommits: number;
+  restrictedContributions: number;
+  calendarContributions: number;
+  pullRequests: number;
+  issues: number;
+  reviews: number;
+  yearsFetched: number;
+  yearsFailed: number;
+  includePrivate: boolean;
+  hasToken: boolean;
+}
+
+export interface FetchOptions {
+  includePrivate?: boolean;
+}
+
 export interface GitHubUser {
   login: string;
   name: string | null;
@@ -45,6 +63,7 @@ export interface GitHubUser {
   totalIssuesOpened: number;
   totalCodeReviews: number;
   totalDiscussions: number;
+  commitBreakdown: CommitBreakdown;
   contributionsLastYear: number;
   privateContributions: number;
   longestStreak: number;
@@ -694,10 +713,7 @@ async function fetchSearchCommitCount(username: string): Promise<number> {
   }
 }
 
-async function fetchAllYearsContributions(
-  username: string,
-  accountCreatedAt: string
-): Promise<{
+interface AggregatedResult {
   totalCommits: number;
   totalPRs: number;
   totalIssuesOpened: number;
@@ -705,18 +721,18 @@ async function fetchAllYearsContributions(
   privateContributions: number;
   contributionsLastYear: number;
   allWeeks: ContributionWeek[];
-}> {
-  const cacheKey = `allYears:${username}`;
+  graphqlCommits: number;
+  searchCommits: number;
+  calendarContributions: number;
+  yearsFetched: number;
+  yearsFailed: number;
+}
 
-  type AggregatedResult = {
-    totalCommits: number;
-    totalPRs: number;
-    totalIssuesOpened: number;
-    totalCodeReviews: number;
-    privateContributions: number;
-    contributionsLastYear: number;
-    allWeeks: ContributionWeek[];
-  };
+async function fetchAllYearsContributions(
+  username: string,
+  accountCreatedAt: string
+): Promise<AggregatedResult> {
+  const cacheKey = `allYears:${username}`;
 
   const cached = cache.get<AggregatedResult>(cacheKey);
 
@@ -759,6 +775,8 @@ async function fetchAllYearsContributions(
   let privateContributions = 0;
   let contributionsLastYear = 0;
   let incomplete = false;
+  let calendarContributions = 0;
+  let yearsFailed = 0;
 
   // Deduplicate calendar days (split ranges can overlap at the edges).
   const dayMap = new Map<string, number>();
@@ -766,6 +784,7 @@ async function fetchAllYearsContributions(
   yearResults.forEach((pieces, idx) => {
     if (!pieces) {
       incomplete = true;
+      yearsFailed++;
       return;
     }
 
@@ -781,6 +800,8 @@ async function fetchAllYearsContributions(
       totalIssuesOpened += cc.totalIssueContributions;
       totalCodeReviews += cc.totalPullRequestReviewContributions;
       privateContributions += cc.restrictedContributionsCount;
+      calendarContributions +=
+        cc.contributionCalendar?.totalContributions ?? 0;
 
       if (isCurrentYear) {
         contributionsLastYear +=
@@ -822,6 +843,11 @@ async function fetchAllYearsContributions(
     privateContributions,
     contributionsLastYear,
     allWeeks,
+    graphqlCommits,
+    searchCommits: searchCount,
+    calendarContributions,
+    yearsFetched: years.length - yearsFailed,
+    yearsFailed,
   };
 
   // Never cache a partial result for long — retry soon.
@@ -1053,8 +1079,10 @@ async function fetchPinnedRepos(
 }
 
 export async function fetchGitHubUser(
-  username: string
+  username: string,
+  options: FetchOptions = {}
 ): Promise<GitHubUser> {
+  const includePrivate = options.includePrivate ?? false;
   const [
     restUser,
     repos,
@@ -1106,18 +1134,46 @@ export async function fetchGitHubUser(
   );
 
   const {
-    totalCommits,
+    totalCommits: publicCommits,
     totalPRs,
     totalIssuesOpened,
     totalCodeReviews,
     privateContributions,
     contributionsLastYear,
     allWeeks,
+    graphqlCommits,
+    searchCommits,
+    calendarContributions,
+    yearsFetched,
+    yearsFailed,
   } =
     await fetchAllYearsContributions(
       username,
       restUser.created_at
     );
+
+  /*
+   * Private/restricted activity is hidden by GitHub (it only exposes a
+   * count). It is mostly commits to private repos, so when
+   * ?include_private=true we add it to the total.
+   */
+  const totalCommits = includePrivate
+    ? publicCommits + privateContributions
+    : publicCommits;
+
+  const commitBreakdown: CommitBreakdown = {
+    graphqlCommits,
+    searchCommits,
+    restrictedContributions: privateContributions,
+    calendarContributions,
+    pullRequests: totalPRs,
+    issues: totalIssuesOpened,
+    reviews: totalCodeReviews,
+    yearsFetched,
+    yearsFailed,
+    includePrivate,
+    hasToken: Boolean(TOKEN),
+  };
 
   /*
    * Discussions are not currently calculated by this API.
@@ -1196,6 +1252,7 @@ export async function fetchGitHubUser(
     totalCodeReviews,
 
     totalDiscussions,
+    commitBreakdown,
 
     contributionsLastYear,
 
