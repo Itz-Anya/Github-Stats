@@ -365,100 +365,6 @@ async function fetchAllRepos(username: string): Promise<RestRepo[]> {
   return pages;
 }
 
-async function fetchGraphQLForYear(
-  username: string,
-  from: string,
-  to: string
-): Promise<YearContributions | undefined> {
-  /*
-   * GitHub's contributionCollection requires GraphQL.
-   * Without a token, we cannot query it.
-   */
-  if (!TOKEN) {
-    return undefined;
-  }
-
-  const query = `
-    query(
-      $login: String!
-      $from: DateTime!
-      $to: DateTime!
-    ) {
-      user(login: $login) {
-        contributionsCollection(
-          from: $from
-          to: $to
-        ) {
-          totalCommitContributions
-          totalPullRequestContributions
-          totalIssueContributions
-          totalPullRequestReviewContributions
-          restrictedContributionsCount
-
-          contributionCalendar {
-            totalContributions
-
-            weeks {
-              contributionDays {
-                contributionCount
-                date
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  try {
-    const res = await fetch(GITHUB_GRAPHQL, {
-      method: "POST",
-      headers: {
-        ...buildHeaders(),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          login: username,
-          from,
-          to,
-        },
-      }),
-    });
-
-    if (!res.ok) {
-      return undefined;
-    }
-
-    const json = (await res.json()) as GraphQLResponse;
-
-    if (json.errors?.length) {
-      const message = json.errors[0]?.message ?? "";
-
-      if (
-        message.toLowerCase().includes("could not resolve") ||
-        message.toLowerCase().includes("unknown user")
-      ) {
-        throw new Error("USER_NOT_FOUND");
-      }
-
-      return undefined;
-    }
-
-    return json.data?.user?.contributionsCollection;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === "USER_NOT_FOUND"
-    ) {
-      throw error;
-    }
-
-    return undefined;
-  }
-}
-
 async function fetchGraphQL(
   username: string
 ): Promise<GraphQLResponse["data"]> {
@@ -582,6 +488,212 @@ async function fetchGraphQL(
   }
 }
 
+/*
+ * Run async tasks with a small concurrency limit so we never hammer
+ * GitHub's GraphQL endpoint (parallel bursts trigger secondary rate
+ * limits / timeouts, which used to silently zero-out whole years).
+ */
+async function mapLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+
+  async function worker(): Promise<void> {
+    while (true) {
+      const i = next++;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i]);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker)
+  );
+
+  return results;
+}
+
+const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/*
+ * Single GraphQL request for one date range.
+ * Returns undefined on any transient failure (caller retries/splits).
+ */
+async function fetchGraphQLForRange(
+  username: string,
+  from: string,
+  to: string
+): Promise<YearContributions | undefined> {
+  if (!TOKEN) {
+    return undefined;
+  }
+
+  const query = `
+    query(
+      $login: String!
+      $from: DateTime!
+      $to: DateTime!
+    ) {
+      user(login: $login) {
+        contributionsCollection(
+          from: $from
+          to: $to
+        ) {
+          totalCommitContributions
+          totalPullRequestContributions
+          totalIssueContributions
+          totalPullRequestReviewContributions
+          restrictedContributionsCount
+
+          contributionCalendar {
+            totalContributions
+
+            weeks {
+              contributionDays {
+                contributionCount
+                date
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const res = await fetch(GITHUB_GRAPHQL, {
+      method: "POST",
+      headers: {
+        ...buildHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        variables: { login: username, from, to },
+      }),
+    });
+
+    if (!res.ok) {
+      return undefined;
+    }
+
+    const json = (await res.json()) as GraphQLResponse;
+
+    if (json.errors?.length) {
+      const message = json.errors[0]?.message ?? "";
+
+      if (
+        message.toLowerCase().includes("could not resolve") ||
+        message.toLowerCase().includes("unknown user")
+      ) {
+        throw new Error("USER_NOT_FOUND");
+      }
+
+      return undefined;
+    }
+
+    return json.data?.user?.contributionsCollection;
+  } catch (error) {
+    if (error instanceof Error && error.message === "USER_NOT_FOUND") {
+      throw error;
+    }
+
+    return undefined;
+  }
+}
+
+/*
+ * Fetch one date range reliably:
+ *   1. try up to 3 times (with backoff)
+ *   2. if it still fails (typically a timeout on a very busy period with
+ *      tens of thousands of commits), split the range in half and fetch
+ *      each half — counts are additive, so nothing is lost.
+ *
+ * Returns null only if the range could not be fetched at all.
+ */
+async function fetchRangeReliably(
+  username: string,
+  from: Date,
+  to: Date,
+  depth = 0
+): Promise<YearContributions[] | null> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const result = await fetchGraphQLForRange(
+      username,
+      from.toISOString(),
+      to.toISOString()
+    );
+
+    if (result) {
+      return [result];
+    }
+
+    await sleep(300 * (attempt + 1));
+  }
+
+  const spanMs = to.getTime() - from.getTime();
+
+  // Don't split below ~1 week or more than 5 levels deep.
+  if (depth >= 5 || spanMs < 7 * 86400000) {
+    return null;
+  }
+
+  const mid = new Date(from.getTime() + Math.floor(spanMs / 2));
+  const midNext = new Date(mid.getTime() + 1000);
+
+  const left = await fetchRangeReliably(username, from, mid, depth + 1);
+  const right = await fetchRangeReliably(username, midNext, to, depth + 1);
+
+  if (!left || !right) {
+    return null;
+  }
+
+  return [...left, ...right];
+}
+
+/*
+ * Cross-check: GitHub's commit search reports the total number of
+ * commits authored by the user across public repositories. This works
+ * even without a token and is not affected by contribution-calendar
+ * quirks, so we use it as a floor for the total.
+ */
+async function fetchSearchCommitCount(username: string): Promise<number> {
+  const cacheKey = `commitSearch:${username}`;
+
+  const cached = cache.get<number>(cacheKey);
+
+  if (cached) {
+    return cached.data;
+  }
+
+  try {
+    const res = await fetch(
+      `${GITHUB_API}/search/commits?q=${encodeURIComponent(
+        `author:${username}`
+      )}&per_page=1`,
+      { headers: buildHeaders() }
+    );
+
+    if (!res.ok) {
+      return 0;
+    }
+
+    const json = (await res.json()) as { total_count?: number };
+
+    const count = json.total_count ?? 0;
+
+    cache.set(cacheKey, count, 1800);
+
+    return count;
+  } catch {
+    return 0;
+  }
+}
+
 async function fetchAllYearsContributions(
   username: string,
   accountCreatedAt: string
@@ -612,97 +724,95 @@ async function fetchAllYearsContributions(
     return cached.data;
   }
 
-  const startYear = new Date(accountCreatedAt).getFullYear();
-  const currentYear = new Date().getFullYear();
+  const startYear = new Date(accountCreatedAt).getUTCFullYear();
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
 
-  const years: Array<{
-    from: string;
-    to: string;
-  }> = [];
+  const years: Array<{ year: number; from: Date; to: Date }> = [];
 
   for (let year = startYear; year <= currentYear; year++) {
     years.push({
-      from: `${year}-01-01T00:00:00Z`,
+      year,
+      from: new Date(`${year}-01-01T00:00:00Z`),
       to:
         year === currentYear
-          ? new Date().toISOString()
-          : `${year}-12-31T23:59:59Z`,
+          ? now
+          : new Date(`${year}-12-31T23:59:59Z`),
     });
   }
 
   /*
-   * Query all years concurrently.
+   * Query years with limited concurrency (4 at a time) instead of all
+   * at once, then in parallel fetch the commit-search total.
    */
-  const results = await Promise.all(
-    years.map(({ from, to }) =>
-      fetchGraphQLForYear(username, from, to)
-    )
-  );
+  const [yearResults, searchCount] = await Promise.all([
+    mapLimit(years, 4, ({ from, to }) =>
+      fetchRangeReliably(username, from, to)
+    ),
+    fetchSearchCommitCount(username),
+  ]);
 
-  let totalCommits = 0;
+  let graphqlCommits = 0;
   let totalPRs = 0;
   let totalIssuesOpened = 0;
   let totalCodeReviews = 0;
   let privateContributions = 0;
+  let contributionsLastYear = 0;
+  let incomplete = false;
 
-  const allWeeks: ContributionWeek[] = [];
+  // Deduplicate calendar days (split ranges can overlap at the edges).
+  const dayMap = new Map<string, number>();
 
-  for (const cc of results) {
-    if (!cc) {
-      continue;
+  yearResults.forEach((pieces, idx) => {
+    if (!pieces) {
+      incomplete = true;
+      return;
     }
 
-    /*
-     * IMPORTANT:
-     *
-     * restrictedContributionsCount is NOT a commit count.
-     *
-     * It represents restricted contributions across multiple
-     * contribution types. Therefore it must NOT be added to
-     * totalCommitContributions.
-     */
-    totalCommits += cc.totalCommitContributions;
+    const isCurrentYear = years[idx].year === currentYear;
 
-    /*
-     * This is the PR contribution count GitHub explicitly
-     * exposes for the user.
-     *
-     * We intentionally do NOT add restrictedContributionsCount
-     * here because restricted contributions may include commits,
-     * issues, reviews, PRs, etc. GitHub does not expose a
-     * restrictedPullRequestContributions field.
-     */
-    totalPRs += cc.totalPullRequestContributions;
+    for (const cc of pieces) {
+      /*
+       * restrictedContributionsCount is NOT a commit count, so it is
+       * kept separate and never added to commits.
+       */
+      graphqlCommits += cc.totalCommitContributions;
+      totalPRs += cc.totalPullRequestContributions;
+      totalIssuesOpened += cc.totalIssueContributions;
+      totalCodeReviews += cc.totalPullRequestReviewContributions;
+      privateContributions += cc.restrictedContributionsCount;
 
-    totalIssuesOpened += cc.totalIssueContributions;
+      if (isCurrentYear) {
+        contributionsLastYear +=
+          cc.contributionCalendar?.totalContributions ?? 0;
+      }
 
-    totalCodeReviews +=
-      cc.totalPullRequestReviewContributions;
+      for (const week of cc.contributionCalendar?.weeks ?? []) {
+        for (const day of week.contributionDays) {
+          const prev = dayMap.get(day.date) ?? 0;
+          dayMap.set(day.date, Math.max(prev, day.contributionCount));
+        }
+      }
+    }
+  });
 
-    /*
-     * Keep restricted/private activity separate.
-     */
-    privateContributions +=
-      cc.restrictedContributionsCount;
-
-    allWeeks.push(
-      ...(cc.contributionCalendar?.weeks ?? [])
-    );
-  }
+  const allWeeks: ContributionWeek[] = [
+    {
+      contributionDays: [...dayMap.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([date, contributionCount]) => ({
+          date,
+          contributionCount,
+        })),
+    },
+  ];
 
   /*
-   * The final yearly result represents the current year.
-   * Its contributionCalendar is the basis for the
-   * "contributionsLastYear" value used by this project.
+   * Total commits = account creation -> now.
+   * Take the larger of the GraphQL sum and the search total so a
+   * dropped/failed year can never make the number shrink to ~1k.
    */
-  const lastYearResult =
-    results.length > 0
-      ? results[results.length - 1]
-      : undefined;
-
-  const contributionsLastYear =
-    lastYearResult?.contributionCalendar
-      ?.totalContributions ?? 0;
+  const totalCommits = Math.max(graphqlCommits, searchCount);
 
   const aggregated: AggregatedResult = {
     totalCommits,
@@ -714,7 +824,8 @@ async function fetchAllYearsContributions(
     allWeeks,
   };
 
-  cache.set(cacheKey, aggregated, 1800);
+  // Never cache a partial result for long — retry soon.
+  cache.set(cacheKey, aggregated, incomplete ? 60 : 1800);
 
   return aggregated;
 }
