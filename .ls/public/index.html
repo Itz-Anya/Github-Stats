@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>GitHub Stats Card Generator</title>
+<meta name="description" content="Create animated GitHub README cards: stats, profile, languages, pinned repos, contributions, streak, trophies and banner. 60+ themes, live preview, one-click copy." />
+<meta name="author" content="Anya & Murali" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="GitHub Stats Card Generator" />
+<meta property="og:description" content="Animated GitHub README cards with 60+ themes and live preview." />
+<meta property="og:image" content="s.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="s.png" />
+<link rel="apple-touch-icon" href="s.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+<style>
+:root {
+  --bg: #090b12;
+  --bg2: #10131d;
+  --panel: rgba(255, 255, 255, 0.045);
+  --panel-strong: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.1);
+  --text: #f3f5fb;
+  --muted: #9aa3bb;
+  --a: #ff7ab8;
+  --b: #8b7bff;
+  --c: #4dd0e1;
+  --ok: #4ade80;
+  --radius: 18px;
+  --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f4fb;
+    --bg2: #ffffff;
+    --panel: rgba(20, 20, 50, 0.04);
+    --panel-strong: rgba(20, 20, 50, 0.08);
+    --line: rgba(20, 20, 50, 0.12);
+    --text: #14142b;
+    --muted: #5d6482;
+    --a: #e0307f;
+    --b: #5b49e6;
+    --c: #0b8fa3;
+    --ok: #15803d;
+    --shadow: 0 24px 50px -28px rgba(40, 30, 90, 0.35);
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before { background: var(--a); top: -30vmax; left: -20vmax; animation: drift 24s ease-in-out infinite alternate; }
+body::after { background: var(--b); bottom: -34vmax; right: -22vmax; animation: drift 30s ease-in-out infinite alternate-reverse; }
+@keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+.wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 0 22px; }
+
+header.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand img { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; background: var(--panel-strong); box-shadow: 0 0 0 1px var(--line), 0 10px 26px -10px var(--a); }
+.brand b { font-weight: 800; letter-spacing: -0.02em; font-size: 1.1rem; }
+.brand small { display: block; color: var(--muted); font-size: 0.74rem; margin-top: -3px; }
+.gh { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: 0.25s; }
+.gh:hover { border-color: var(--a); transform: translateY(-2px); }
+.gh svg { width: 17px; height: 17px; fill: currentColor; }
+
+.hero { text-align: center; padding: 26px 0 30px; }
+.hero h1 { font-size: clamp(2rem, 5.2vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+.grad { background: linear-gradient(100deg, var(--a), var(--b), var(--c), var(--a)); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: flow 8s linear infinite; }
+@keyframes flow { to { background-position: 250% 0; } }
+.hero p { color: var(--muted); max-width: 640px; margin: 14px auto 0; font-size: 1.05rem; }
+.userbar { display: flex; gap: 10px; max-width: 520px; margin: 26px auto 0; padding: 6px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); transition: 0.25s; }
+.userbar:focus-within { border-color: var(--b); box-shadow: 0 0 0 4px color-mix(in srgb, var(--b) 22%, transparent), var(--shadow); }
+.userbar span { display: grid; place-items: center; padding-left: 14px; color: var(--muted); font-family: var(--mono); }
+.userbar input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; padding: 10px 6px; font-size: 1rem; }
+.btn { border: 0; border-radius: 999px; padding: 10px 20px; font-weight: 700; color: #fff; background: linear-gradient(100deg, var(--a), var(--b)); box-shadow: 0 10px 24px -10px var(--a); transition: 0.25s; }
+.btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); font-weight: 600; font-size: 0.92rem; transition: 0.25s; }
+.tab svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tab:hover { transform: translateY(-2px); border-color: var(--b); }
+.tab[aria-pressed="true"] { color: #fff; border-color: transparent; background: linear-gradient(100deg, var(--a), var(--b)); box-shadow: 0 12px 28px -12px var(--a); }
+
+.studio { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 20px; align-items: start; margin-top: 8px; }
+@media (max-width: 960px) { .studio { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; backdrop-filter: blur(14px); box-shadow: var(--shadow); }
+.panel + .panel { margin-top: 16px; }
+.panel h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px dashed var(--line); }
+.row:last-child { border-bottom: 0; }
+.row label { font-size: 0.93rem; font-weight: 500; }
+.row small { display: block; color: var(--muted); font-size: 0.76rem; font-weight: 400; }
+.switch { position: relative; width: 44px; height: 25px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.switch i { position: absolute; inset: 0; border-radius: 999px; background: var(--panel-strong); border: 1px solid var(--line); transition: 0.25s; }
+.switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px; border-radius: 50%; background: var(--muted); transition: 0.25s; }
+.switch input:checked + i { background: linear-gradient(100deg, var(--a), var(--b)); border-color: transparent; }
+.switch input:checked + i::after { transform: translateX(19px); background: #fff; }
+.switch input:focus-visible + i { outline: 2px solid var(--c); outline-offset: 2px; }
+.range { display: flex; align-items: center; gap: 10px; }
+.range input { width: 130px; accent-color: var(--b); }
+.range output { min-width: 30px; text-align: right; font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+select, .text { background: var(--panel-strong); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; outline: 0; font-size: 0.9rem; }
+select { background-color: var(--bg2); }
+.text { width: 100%; margin-top: 8px; }
+select:focus, .text:focus { border-color: var(--b); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-size: 0.8rem; font-weight: 500; transition: 0.2s; }
+.chip:hover { border-color: var(--a); }
+.chip[aria-pressed="true"] { background: var(--panel-strong); border-color: var(--b); color: var(--b); font-weight: 700; }
+.chip.off[aria-pressed="true"] { border-color: var(--a); color: var(--a); text-decoration: line-through; }
+.empty { color: var(--muted); font-size: 0.88rem; padding: 4px 0; }
+
+.cats { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.cats::-webkit-scrollbar { display: none; }
+.cats .chip { flex: none; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px 2px; scrollbar-width: thin; }
+.sw { position: relative; border-radius: 12px; padding: 10px 8px 8px; border: 1.5px solid transparent; text-align: left; transition: 0.2s; display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.25); }
+.sw:hover { transform: translateY(-2px); }
+.sw b { font-size: 1.05rem; line-height: 1; font-weight: 800; }
+.sw span { font-size: 0.66rem; font-weight: 600; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sw i { position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; }
+.sw[aria-pressed="true"] { border-color: var(--a); box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 35%, transparent); }
+
+.stage { position: sticky; top: 14px; }
+.stagebox { position: relative; border-radius: var(--radius); border: 1px solid var(--line); background: repeating-conic-gradient(var(--panel) 0% 25%, transparent 0% 50%) 0 0 / 22px 22px; padding: 20px; min-height: 240px; display: grid; place-items: center; overflow: hidden; }
+.stagebox img { max-width: 100%; height: auto; display: block; border-radius: 4px; transition: opacity 0.3s; }
+.stagebox img.loading { opacity: 0.25; }
+.loader { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0; transition: 0.2s; }
+.loader.on { opacity: 1; }
+.loader::after { content: ""; width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--a); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.stagebar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; justify-content: space-between; }
+.stagebar .meta { font-family: var(--mono); font-size: 0.76rem; color: var(--muted); }
+.mini { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 11px; border: 1px solid var(--line); background: var(--panel); font-size: 0.84rem; font-weight: 600; text-decoration: none; transition: 0.2s; }
+.mini:hover { border-color: var(--c); transform: translateY(-1px); }
+
+.out { margin-top: 16px; }
+.outtabs { display: flex; gap: 6px; }
+.outtabs .chip { font-family: var(--mono); }
+.code { position: relative; margin-top: 12px; }
+.code pre { font-family: var(--mono); font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all; background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 92px 14px 14px; color: var(--c); max-height: 210px; overflow: auto; }
+.copy { position: absolute; top: 10px; right: 10px; padding: 7px 13px; border-radius: 9px; border: 0; font-size: 0.8rem; font-weight: 700; color: #fff; background: linear-gradient(100deg, var(--a), var(--b)); }
+.copy.done { background: var(--ok); }
+.allbtn { margin-top: 12px; width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed var(--line); background: transparent; font-weight: 600; transition: 0.2s; }
+.allbtn:hover { border-color: var(--a); }
+
+.gallery { margin: 56px 0 30px; }
+.gallery h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); font-weight: 800; letter-spacing: -0.03em; }
+.gallery > p { color: var(--muted); margin-top: 6px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+.tile { position: relative; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); padding: 14px; text-align: left; transition: 0.3s; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.tile:hover { transform: translateY(-4px); border-color: var(--b); box-shadow: 0 26px 50px -26px var(--b); }
+.tile .head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tile .head b { font-size: 1rem; font-weight: 700; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ok); }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: 0.25; } }
+.tile .shot { border-radius: 12px; display: grid; place-items: center; min-height: 120px; background: var(--bg2); border: 1px solid var(--line); padding: 8px; }
+.tile img { width: 100%; height: auto; display: block; }
+.tile.wide { grid-column: 1 / -1; }
+
+footer { text-align: center; color: var(--muted); font-size: 0.86rem; padding: 34px 0 46px; }
+footer a { color: var(--text); font-weight: 600; text-decoration: none; }
+footer a:hover { color: var(--a); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 30px); opacity: 0; padding: 11px 18px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--line); box-shadow: var(--shadow); font-weight: 600; font-size: 0.9rem; z-index: 20; transition: 0.3s; pointer-events: none; }
+.toast.on { transform: translate(-50%, 0); opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/">
+      <img src="s.png" alt="GitHub Stats logo" onerror="this.style.visibility='hidden'" />
+      <span><b>GitHub Stats</b><small>Animated README cards</small></span>
+    </a>
+    <a class="gh" href="https://github.com/Itz-Anya/Github-Stats" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      Star on GitHub
+    </a>
+  </header>
+
+  <section class="hero">
+    <h1>Make your GitHub profile <span class="grad">move</span></h1>
+    <p>Pick a card, pick a theme, copy one line into your README. Eight animated cards, 60+ themes, all rendered live.</p>
+    <form class="userbar" id="userForm" autocomplete="off">
+      <span>@</span>
+      <input id="username" type="text" placeholder="your-github-username" spellcheck="false" autocapitalize="off" aria-label="GitHub username" maxlength="39" />
+      <button class="btn" type="submit">Generate</button>
+    </form>
+  </section>
+
+  <nav class="tabs" id="tabs" aria-label="Card type"></nav>
+
+  <main class="studio">
+    <div>
+      <section class="panel">
+        <h3>Options <span id="cardName"></span></h3>
+        <div id="options"></div>
+      </section>
+      <section class="panel">
+        <h3>Theme <span id="themeName"></span></h3>
+        <div class="cats" id="cats"></div>
+        <div class="swatches" id="swatches"></div>
+      </section>
+      <section class="panel">
+        <h3>Style</h3>
+        <div class="row">
+          <label for="radius">Corner radius<small>Overrides the theme default</small></label>
+          <div class="range"><input id="radius" type="range" min="0" max="28" value="14" /><output id="radiusOut">default</output></div>
+        </div>
+        <div class="row">
+          <label for="animate">Animations<small>Turn off for a static SVG</small></label>
+          <span class="switch"><input id="animate" type="checkbox" checked /><i></i></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="stage">
+      <div class="panel">
+        <h3>Live preview <span id="sizeMeta" style="letter-spacing:0;text-transform:none;font-family:var(--mono)"></span></h3>
+        <div class="stagebox">
+          <img id="preview" alt="Card preview" />
+          <div class="loader" id="loader"></div>
+        </div>
+        <div class="stagebar">
+          <span class="meta" id="pathMeta"></span>
+          <span style="display:flex;gap:8px">
+            <button class="mini" id="reload" type="button">Replay</button>
+            <a class="mini" id="openSvg" href="#" target="_blank" rel="noopener">Open SVG</a>
+          </span>
+        </div>
+        <div class="out">
+          <div class="outtabs" id="outTabs"></div>
+          <div class="code"><pre id="code"></pre><button class="copy" id="copy" type="button">Copy</button></div>
+          <button class="allbtn" id="copyAll" type="button">Copy every card as one README block</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="gallery">
+    <h2>Live <span class="grad">previews</span></h2>
+    <p>Every card below is rendered for the username and theme you chose. Tap one to customize it.</p>
+    <div class="grid" id="gallery"></div>
+  </section>
+
+  <footer>Made with care by <a href="https://github.com/Itz-Anya" target="_blank" rel="noopener">Anya</a> &amp; Murali</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const DATA = {"cats":{"Dark Dev":["dark","github_dark","tokyonight","dracula","nord","solarized","monokai"],"Futuristic":["cyberpunk","midnight","ocean_dark","neon_dreams","galaxy","aurora","starlight"],"Light":["light","github_light"],"Pastel":["sakura","rose_gold","lavender","cotton_candy","mint_fresh","peach_blossom","bubblegum","sunshine","ocean_breeze","cherry_blossom","pastel_rainbow"],"Neon":["neon_green","neon_pink","neon_orange","neon_blue","neon_purple","neon_red"],"Ultra Dark":["obsidian","black_ice","pitch_dark"],"Beautiful":["emerald","sapphire","ruby","amber_glow","velvet","golden_hour"],"Bright":["vivid_day","solar_flare","electric","lime_burst"],"Simple":["minimal_white","minimal_dark","paper","ink","mono_slate"],"Retro":["retro_terminal","amber_crt","vaporwave","outrun"],"Nature":["forest","desert","arctic","deep_sea","sunset"],"Colorful":["rainbow_dark","pastel_rainbow","tropical","cosmic"]},"colors":{"dark":["#0d1117","#58a6ff","#ffffff"],"github_dark":["#161b22","#3fb950","#ffffff"],"tokyonight":["#1a1b27","#7aa2f7","#ffffff"],"dracula":["#282a36","#bd93f9","#ffffff"],"nord":["#2e3440","#88c0d0","#ffffff"],"solarized":["#002b36","#2aa198","#ffffff"],"monokai":["#272822","#fa5a94","#ffffff"],"cyberpunk":["#0d0221","#ff00ff","#ffffff"],"midnight":["#0a0e1a","#818cf8","#ffffff"],"ocean_dark":["#1b2b34","#6699cc","#ffffff"],"neon_dreams":["#080815","#00f5d4","#ffffff"],"galaxy":["#0b0019","#8b5cf6","#ffffff"],"aurora":["#0f1923","#4dd0e1","#ffffff"],"light":["#ffffff","#0969da","#24292f"],"github_light":["#f6f8fa","#0969da","#24292f"],"sakura":["#fff0f5","#eb3472","#6c0d33"],"rose_gold":["#fff8f8","#d65656","#5d252e"],"lavender":["#f8f4ff","#b45bc4","#521577"],"cotton_candy":["#fef9ff","#e92e8a","#6b0c36"],"mint_fresh":["#f0fff8","#3a8f87","#004038"],"peach_blossom":["#fffaf5","#c27400","#692500"],"bubblegum":["#fff5fe","#f02c97","#711037"],"sunshine":["#fffef0","#b08400","#643104"],"ocean_breeze":["#f0f8ff","#0c85e6","#0a367b"],"starlight":["#0d0d1a","#ffd700","#ffffff"],"cherry_blossom":["#1a0010","#ff6699","#ffffff"],"neon_green":["#010b01","#00ff41","#ffffff"],"neon_pink":["#0d0010","#ff0090","#ffffff"],"neon_orange":["#0d0500","#ff6600","#ffffff"],"neon_blue":["#00010d","#0066ff","#ffffff"],"neon_purple":["#07000f","#9900ff","#ffffff"],"neon_red":["#0d0000","#ff0033","#ffffff"],"obsidian":["#020202","#6e6e6e","#ffffff"],"black_ice":["#000000","#4f63c4","#ffffff"],"pitch_dark":["#000000","#696969","#ffffff"],"emerald":["#0a1f14","#059669","#ffffff"],"sapphire":["#030c1a","#3e6ae5","#ffffff"],"ruby":["#1a0308","#e11d48","#ffffff"],"amber_glow":["#1a0f00","#d97706","#ffffff"],"velvet":["#1a0a1a","#8a4fef","#ffffff"],"golden_hour":["#1a1000","#c35a0a","#ffffff"],"vivid_day":["#ffffff","#258cd1","#1a1a2e"],"solar_flare":["#fff7e0","#f24200","#5e2c00"],"electric":["#f0f8ff","#0080f0","#003366"],"lime_burst":["#f5ffe0","#699600","#334400"],"minimal_white":["#fafafa","#555555","#111111"],"minimal_dark":["#1a1a1a","#888888","#ffffff"],"paper":["#f5f0e8","#8b7355","#2c2416"],"ink":["#f8f8f2","#000000","#000000"],"mono_slate":["#1e2030","#787f9e","#ffffff"],"retro_terminal":["#0a0e00","#22aa00","#ffffff"],"amber_crt":["#110a00","#cc7700","#ffffff"],"vaporwave":["#1a0533","#ff71ce","#ffffff"],"outrun":["#05051a","#ff2079","#ffffff"],"forest":["#0a1a0a","#3d8a3d","#ffffff"],"desert":["#1a1205","#b8860b","#ffffff"],"arctic":["#e8f4f8","#3285b7","#193948"],"deep_sea":["#000d1a","#0077cc","#ffffff"],"sunset":["#1a0505","#cc4400","#ffffff"],"rainbow_dark":["#0a0010","#cc33ff","#ffffff"],"pastel_rainbow":["#fff9ff","#c34ae1","#472477"],"tropical":["#003322","#00cc66","#ffffff"],"cosmic":["#050010","#9317ff","#ffffff"]}};
+const DEFAULT_BASE = "https://anya-github-stats.vercel.app";
+const BASE = location.protocol.startsWith("http") && !/^(localhost|127\.|\[::1\])/.test(location.hostname) ? location.origin : DEFAULT_BASE;
+
+const ICON = {
+  stats: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+  profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  langstack: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+  pinned: '<path d="M12 17v5"/><path d="M9 3h6l-1 7 3 3v2H7v-2l3-3z"/>',
+  contrib: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  streak: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  trophies: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0z"/>',
+  banner: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>'
+};
+
+const STAT_HIDE = ["repos", "stars", "forks", "commits", "prs", "issues", "reviews", "followers", "following", "gists", "watchers"];
+const SECTION_HIDE = ["stats", "languages", "streakinfo", "pinned"];
+const yearNow = new Date().getFullYear();
+const YEARS = [["", "Last 12 months"], ...Array.from({ length: Math.min(yearNow - 2008, 12) + 1 }, (_, i) => [String(yearNow - i), String(yearNow - i)])];
+
+const CARDS = {
+  stats: {
+    label: "Stats", path: "stats", wide: true,
+    options: [
+      { k: "show_icons", t: "bool", def: true, label: "Show icons" },
+      { k: "compact", t: "bool", def: false, label: "Compact layout" },
+      { k: "include_private", t: "bool", def: true, label: "Include private contributions" },
+      { k: "hide_avatar_ring", t: "bool", def: false, label: "Hide avatar ring" },
+      { k: "section_spacing", t: "range", min: 0, max: 40, def: 0, label: "Section spacing" },
+      { k: "hide", t: "multi", label: "Hide stats", groups: [["Stats", STAT_HIDE], ["Sections", SECTION_HIDE]] }
+    ]
+  },
+  profile: { label: "Profile", path: "profile", options: [] },
+  langstack: {
+    label: "Languages", path: "langstack",
+    options: [
+      { k: "hide_title", t: "bool", def: false, label: "Hide title" },
+      { k: "include_forks", t: "bool", def: false, label: "Include forked repos" },
+      { k: "limit", t: "range", min: 3, max: 15, def: 10, label: "Languages shown" },
+      { k: "hide", t: "text", label: "Hide languages", placeholder: "HTML,CSS,Shell" }
+    ]
+  },
+  pinned: { label: "Pinned", path: "pinned", options: [{ k: "hide_title", t: "bool", def: false, label: "Hide title" }] },
+  contrib: {
+    label: "Contributions", path: "contribution-act",
+    options: [
+      { k: "hide_title", t: "bool", def: false, label: "Hide title" },
+      { k: "include_private", t: "bool", def: true, label: "Include private contributions" },
+      { k: "year", t: "select", def: "", label: "Period", choices: YEARS }
+    ]
+  },
+  streak: {
+    label: "Streak", path: "streak",
+    options: [
+      { k: "hide_title", t: "bool", def: false, label: "Hide title" },
+      { k: "include_private", t: "bool", def: true, label: "Include private contributions" }
+    ]
+  },
+  trophies: {
+    label: "Trophies", path: "trophies",
+    options: [
+      { k: "hide_title", t: "bool", def: false, label: "Hide title" },
+      { k: "include_private", t: "bool", def: true, label: "Include private contributions" },
+      { k: "columns", t: "select", def: "4", label: "Columns", choices: [["2", "2"], ["3", "3"], ["4", "4"]] }
+    ]
+  },
+  banner: { label: "Banner", path: "banner", options: [{ k: "hide_stats", t: "bool", def: false, label: "Hide stats row" }] }
+};
+
+const FEATURED = ["profile", "langstack", "pinned", "contrib"];
+const ORDER = ["stats", "profile", "langstack", "pinned", "contrib", "streak", "trophies", "banner"];
+
+const state = {
+  card: "profile",
+  username: "",
+  theme: "tokyonight",
+  radius: null,
+  animate: true,
+  vals: {},
+  cat: "All",
+  out: "markdown"
+};
+
+const $ = (s) => document.querySelector(s);
+const el = (tag, attrs = {}, html = "") => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  n.innerHTML = html;
+  return n;
+};
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const debounce = (fn, ms) => {
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), ms);
+  };
+};
+const cleanName = (n) => n.replace(/_/g, " ");
+
+function cardVals(card) {
+  state.vals[card] ??= {};
+  return state.vals[card];
+}
+
+function buildUrl(card, { absolute = true, preview = false, plain = false } = {}) {
+  const c = CARDS[card];
+  const p = new URLSearchParams();
+  p.set("username", state.username || "octocat");
+  if (state.theme !== "dark") p.set("theme", state.theme);
+  if (state.radius !== null) p.set("border_radius", String(state.radius));
+  if (!state.animate) p.set("animate", "false");
+  const v = cardVals(card);
+  for (const o of plain ? [] : c.options) {
+    const cur = v[o.k];
+    if (cur === undefined) continue;
+    if (o.t === "bool") {
+      if (cur !== o.def) p.set(o.k, String(cur));
+    } else if (o.t === "multi") {
+      if (cur.length) p.set(o.k, cur.join(","));
+    } else if (o.t === "text") {
+      if (String(cur).trim()) p.set(o.k, String(cur).trim());
+    } else if (String(cur) !== String(o.def)) {
+      p.set(o.k, String(cur));
+    }
+  }
+  const origin = absolute ? BASE : "";
+  const base = `${origin}/api/${c.path}`;
+  return `${base}?${p.toString()}${preview ? `&_=${preview}` : ""}`;
+}
+
+function snippet(card, kind) {
+  const url = buildUrl(card);
+  const user = state.username || "octocat";
+  const alt = `${user} GitHub ${CARDS[card].label}`;
+  if (kind === "url") return url;
+  if (kind === "html") return `<a href="https://github.com/${user}">\n  <img src="${url}" alt="${alt}" width="100%" />\n</a>`;
+  return `[![${alt}](${url})](https://github.com/${user})`;
+}
+
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => t.classList.remove("on"), 1800);
+}
+
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = el("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+  toast("Copied to clipboard");
+  if (btn) {
+    const old = btn.textContent;
+    btn.textContent = "Copied";
+    btn.classList.add("done");
+    setTimeout(() => {
+      btn.textContent = old;
+      btn.classList.remove("done");
+    }, 1400);
+  }
+}
+
+function renderTabs() {
+  const nav = $("#tabs");
+  nav.innerHTML = "";
+  for (const k of ORDER) {
+    const b = el("button", { class: "tab", type: "button", "aria-pressed": String(state.card === k) }, `<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>${CARDS[k].label}`);
+    b.addEventListener("click", () => selectCard(k));
+    nav.appendChild(b);
+  }
+}
+
+function renderOptions() {
+  const c = CARDS[state.card];
+  const box = $("#options");
+  box.innerHTML = "";
+  $("#cardName").textContent = c.label;
+  if (!c.options.length) {
+    box.appendChild(el("p", { class: "empty" }, "This card has no extra options. Choose a theme and style below."));
+    return;
+  }
+  const v = cardVals(state.card);
+  for (const o of c.options) {
+    if (o.t === "bool") {
+      const cur = v[o.k] ?? o.def;
+      const row = el("div", { class: "row" }, `<label for="o_${o.k}">${o.label}</label><span class="switch"><input id="o_${o.k}" type="checkbox" ${cur ? "checked" : ""} /><i></i></span>`);
+      row.querySelector("input").addEventListener("change", (e) => {
+        v[o.k] = e.target.checked;
+        refresh();
+      });
+      box.appendChild(row);
+    } else if (o.t === "range") {
+      const cur = v[o.k] ?? o.def;
+      const row = el("div", { class: "row" }, `<label for="o_${o.k}">${o.label}</label><div class="range"><input id="o_${o.k}" type="range" min="${o.min}" max="${o.max}" value="${cur}" /><output>${cur}</output></div>`);
+      const inp = row.querySelector("input");
+      inp.addEventListener("input", () => {
+        row.querySelector("output").textContent = inp.value;
+        v[o.k] = Number(inp.value);
+        refresh();
+      });
+      box.appendChild(row);
+    } else if (o.t === "select") {
+      const cur = v[o.k] ?? o.def;
+      const row = el("div", { class: "row" }, `<label for="o_${o.k}">${o.label}</label><select id="o_${o.k}">${o.choices.map(([val, name]) => `<option value="${val}" ${String(cur) === String(val) ? "selected" : ""}>${name}</option>`).join("")}</select>`);
+      row.querySelector("select").addEventListener("change", (e) => {
+        v[o.k] = e.target.value;
+        refresh();
+      });
+      box.appendChild(row);
+    } else if (o.t === "text") {
+      const row = el("div", {}, `<div class="row" style="border:0;padding-bottom:0"><label for="o_${o.k}">${o.label}</label></div><input class="text" id="o_${o.k}" type="text" placeholder="${o.placeholder || ""}" value="${v[o.k] ?? ""}" spellcheck="false" />`);
+      row.querySelector("input").addEventListener("input", (e) => {
+        v[o.k] = e.target.value;
+        refresh();
+      });
+      box.appendChild(row);
+    } else if (o.t === "multi") {
+      v[o.k] ??= [];
+      const wrap = el("div", {}, `<div class="row" style="border:0;padding-bottom:0"><label>${o.label}<small>Tap to hide</small></label></div>`);
+      for (const [gname, list] of o.groups) {
+        wrap.appendChild(el("small", { style: "display:block;margin-top:10px;color:var(--muted);font-size:.74rem" }, gname));
+        const chips = el("div", { class: "chips" });
+        for (const name of list) {
+          const b = el("button", { class: "chip off", type: "button", "aria-pressed": String(v[o.k].includes(name)) }, name);
+          b.addEventListener("click", () => {
+            const i = v[o.k].indexOf(name);
+            if (i >= 0) v[o.k].splice(i, 1);
+            else v[o.k].push(name);
+            b.setAttribute("aria-pressed", String(i < 0));
+            refresh();
+          });
+          chips.appendChild(b);
+        }
+        wrap.appendChild(chips);
+      }
+      box.appendChild(wrap);
+    }
+  }
+}
+
+function textOn(bg) {
+  const h = bg.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((x) => x + x).join("") : h, 16);
+  const l = (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+  return l > 0.6 ? "#1b1b2b" : "#ffffff";
+}
+
+function renderThemes() {
+  const cats = $("#cats");
+  cats.innerHTML = "";
+  const names = ["All", ...Object.keys(DATA.cats), "Random"];
+  for (const n of names) {
+    const b = el("button", { class: "chip", type: "button", "aria-pressed": String(state.cat === n) }, n);
+    b.addEventListener("click", () => {
+      state.cat = n;
+      if (n === "Random") {
+        state.theme = "random";
+        refresh();
+      }
+      renderThemes();
+    });
+    cats.appendChild(b);
+  }
+  const list = state.cat === "All" || state.cat === "Random" ? Object.values(DATA.cats).flat() : DATA.cats[state.cat] || [];
+  const grid = $("#swatches");
+  grid.innerHTML = "";
+  for (const t of list) {
+    const [bg, accent, title] = DATA.colors[t];
+    const b = el("button", { class: "sw", type: "button", "aria-pressed": String(state.theme === t), title: cleanName(t), style: `background:${bg};color:${title}` }, `<i style="background:${accent}"></i><b>Aa</b><span>${cleanName(t)}</span>`);
+    b.addEventListener("click", () => {
+      state.theme = t;
+      state.cat = state.cat === "Random" ? "All" : state.cat;
+      grid.querySelectorAll(".sw").forEach((x) => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+      refresh();
+    });
+    grid.appendChild(b);
+  }
+  $("#themeName").textContent = state.theme === "random" ? "random" : cleanName(state.theme);
+}
+
+function renderOutTabs() {
+  const box = $("#outTabs");
+  box.innerHTML = "";
+  for (const [k, name] of [["markdown", "Markdown"], ["html", "HTML"], ["url", "URL"]]) {
+    const b = el("button", { class: "chip", type: "button", "aria-pressed": String(state.out === k) }, name);
+    b.addEventListener("click", () => {
+      state.out = k;
+      renderOutTabs();
+      updateCode();
+    });
+    box.appendChild(b);
+  }
+}
+
+function updateCode() {
+  $("#code").textContent = snippet(state.card, state.out);
+  $("#openSvg").href = buildUrl(state.card, { absolute: false });
+  $("#pathMeta").textContent = `/api/${CARDS[state.card].path}`;
+}
+
+let previewToken = 0;
+function updatePreview(force = false) {
+  const img = $("#preview");
+  const loader = $("#loader");
+  const url = buildUrl(state.card, { absolute: false, preview: force ? Date.now() : false });
+  const token = ++previewToken;
+  img.classList.add("loading");
+  loader.classList.add("on");
+  const probe = new Image();
+  probe.onload = () => {
+    if (token !== previewToken) return;
+    img.src = url;
+    img.classList.remove("loading");
+    loader.classList.remove("on");
+    $("#sizeMeta").textContent = `${probe.naturalWidth} × ${probe.naturalHeight}`;
+  };
+  probe.onerror = () => {
+    if (token !== previewToken) return;
+    img.src = url;
+    img.classList.remove("loading");
+    loader.classList.remove("on");
+    $("#sizeMeta").textContent = "";
+  };
+  probe.src = url;
+}
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  if (state.username) p.set("u", state.username);
+  p.set("card", state.card);
+  p.set("theme", state.theme);
+  history.replaceState(null, "", `?${p.toString()}`);
+}
+
+const refreshPreview = debounce(() => updatePreview(), 280);
+function refresh() {
+  $("#themeName").textContent = state.theme === "random" ? "random" : cleanName(state.theme);
+  updateCode();
+  syncUrl();
+  refreshPreview();
+}
+
+function selectCard(k) {
+  state.card = k;
+  renderTabs();
+  renderOptions();
+  updateCode();
+  syncUrl();
+  updatePreview();
+}
+
+function renderGallery() {
+  const g = $("#gallery");
+  g.innerHTML = "";
+  const order = [...FEATURED, ...ORDER.filter((k) => !FEATURED.includes(k))];
+  order.forEach((k, i) => {
+    const wide = k === "stats" || k === "banner" || k === "trophies" || k === "streak";
+    const t = el("button", { class: `tile${wide ? " wide" : ""}`, type: "button" }, `<div class="head"><b>${CARDS[k].label}</b>${FEATURED.includes(k) ? '<span class="badge">Live</span>' : ""}</div><div class="shot"><img alt="${CARDS[k].label} preview" loading="lazy" /></div>`);
+    t.addEventListener("click", () => {
+      selectCard(k);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    g.appendChild(t);
+  });
+  updateGallery();
+}
+
+async function updateGallery() {
+  const imgs = [...document.querySelectorAll("#gallery .tile")];
+  const order = [...FEATURED, ...ORDER.filter((k) => !FEATURED.includes(k))];
+  for (let i = 0; i < imgs.length; i++) {
+    const k = order[i];
+    imgs[i].querySelector("img").src = buildUrl(k, { absolute: false, plain: true });
+    if (i < 4) await sleep(120);
+  }
+}
+
+function init() {
+  const q = new URLSearchParams(location.search);
+  const u = q.get("u") || localStorage.getItem("gh-user") || "";
+  const card = q.get("card");
+  const theme = q.get("theme");
+  if (card && CARDS[card]) state.card = card;
+  if (theme && (DATA.colors[theme] || theme === "random")) state.theme = theme;
+  state.username = u;
+  $("#username").value = u;
+  if (!u) {
+    state.username = "Itz-Anya";
+    $("#username").placeholder = "Itz-Anya";
+  }
+
+  $("#userForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = $("#username").value.trim().replace(/^@/, "");
+    if (!v) return;
+    state.username = v;
+    try { localStorage.setItem("gh-user", v); } catch {}
+    refresh();
+    updateGallery();
+  });
+
+  $("#radius").addEventListener("input", (e) => {
+    state.radius = Number(e.target.value);
+    $("#radiusOut").textContent = `${state.radius}px`;
+    refresh();
+  });
+  $("#animate").addEventListener("change", (e) => {
+    state.animate = e.target.checked;
+    refresh();
+  });
+  $("#reload").addEventListener("click", () => updatePreview(true));
+  $("#copy").addEventListener("click", (e) => copyText($("#code").textContent, e.currentTarget));
+  $("#copyAll").addEventListener("click", () => {
+    const text = ORDER.map((k) => snippet(k, state.out === "html" ? "html" : "markdown")).join("\n\n");
+    copyText(text);
+  });
+
+  renderTabs();
+  renderOptions();
+  renderThemes();
+  renderOutTabs();
+  renderGallery();
+  updateCode();
+  updatePreview();
+  syncUrl();
+}
+init();
+</script>
+</body>
+</html>

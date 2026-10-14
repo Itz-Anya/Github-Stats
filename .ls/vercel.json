@@ -1,0 +1,105 @@
+{
+  "version": 2,
+  "functions": {
+    "api/stats.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/profile.ts": {
+      "memory": 512,
+      "maxDuration": 20
+    },
+    "api/langstack.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/contribution-act.ts": {
+      "memory": 512,
+      "maxDuration": 15
+    },
+    "api/pinned.ts": {
+      "memory": 512,
+      "maxDuration": 20
+    },
+    "api/trophies.ts": {
+      "memory": 512,
+      "maxDuration": 20
+    },
+    "api/banner.ts": {
+      "memory": 512,
+      "maxDuration": 20
+    },
+    "api/streak.ts": {
+      "memory": 512,
+      "maxDuration": 20
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, OPTIONS"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/profile",
+      "dest": "/api/profile.ts"
+    },
+    {
+      "src": "/api/banner",
+      "dest": "/api/banner.ts"
+    },
+    {
+      "src": "/api/trophies",
+      "dest": "/api/trophies.ts"
+    },
+    {
+      "src": "/api/contributions",
+      "dest": "/api/contribution-act.ts"
+    },
+    {
+      "src": "/api/contrib",
+      "dest": "/api/contribution-act.ts"
+    },
+    {
+      "src": "/api/contrib-act",
+      "dest": "/api/contribution-act.ts"
+    },
+    {
+      "src": "/api/pinned",
+      "dest": "/api/pinned.ts"
+    },
+    {
+      "src": "/api/contribution-act",
+      "dest": "/api/contribution-act.ts"
+    },
+    {
+      "src": "/api/langstack",
+      "dest": "/api/langstack.ts"
+    },
+    {
+      "src": "/api/streak",
+      "dest": "/api/streak.ts"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/stats.ts"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ]
+}
