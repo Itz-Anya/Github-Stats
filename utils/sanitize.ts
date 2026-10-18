@@ -26,16 +26,6 @@ export function formatNumber(n: number): string {
   return n.toString();
 }
 
-export function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-US", {
-      year: "numeric", month: "short", day: "numeric",
-    });
-  } catch {
-    return iso.slice(0, 10);
-  }
-}
-
 export function escapeXml(str: string): string {
   return str
     .replace(/&/g, "&amp;")

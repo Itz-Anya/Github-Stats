@@ -647,7 +647,7 @@ const themes: Record<string, Theme> = {
 
 };
 
-export const DEFAULT_THEME = "dark";
+const DEFAULT_THEME = "dark";
 
 export function getTheme(name: string, borderRadiusOverride?: number): Theme {
   const resolvedName =
@@ -663,4 +663,3 @@ export function getTheme(name: string, borderRadiusOverride?: number): Theme {
 }
 
 export const THEME_NAMES = Object.keys(themes);
-

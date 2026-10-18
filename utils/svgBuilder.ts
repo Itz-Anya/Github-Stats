@@ -10,9 +10,10 @@ export interface RenderOptions {
   borderRadius: number;
   hideAvatarRing?: boolean;
   sectionSpacing?: number;
+  animate?: boolean;
 }
 
-export const ICONS: Record<string, string> = {
+const ICONS: Record<string, string> = {
   repo:       `<path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 010-1.5H13v-2h-2a1 1 0 01-1-1V8.5a1 1 0 011-1h2V4h-8a1 1 0 00-1 1v1.5a.75.75 0 01-1.5 0V5A2.5 2.5 0 012 2.5z"/>`,
   star:       `<path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>`,
   commit:     `<path d="M11.93 8.5a4.002 4.002 0 01-7.86 0H.75a.75.75 0 010-1.5h3.32a4.002 4.002 0 017.86 0h3.32a.75.75 0 010 1.5h-3.32zM8 6a2 2 0 100 4 2 2 0 000-4z"/>`,
@@ -56,7 +57,7 @@ function linearGradient(
   return `<linearGradient id="${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${s}</linearGradient>`;
 }
 
-function buildAnimations(): string {
+function buildAnimations(animate: boolean): string {
   return `<style>
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(8px); }
@@ -87,6 +88,14 @@ function buildAnimations(): string {
     .pinned-anim { animation: fadeInUp  0.5s ease 0.60s both; }
     .avatar-ring { animation: avatarGlow 3s ease-in-out infinite; }
     .bar-fill    { animation: barGrow   1.1s cubic-bezier(.2,.8,.3,1) 0.35s both; }
+    @keyframes icoPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.22); } }
+    @keyframes hotPulse { 0%,100% { opacity: 0.05; } 50% { opacity: 0.22; } }
+    @keyframes valPop   { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+    .ico { transform-box: fill-box; transform-origin: center; animation: icoPulse 3.4s ease-in-out infinite; }
+    .hot { animation: hotPulse 2.6s ease-in-out infinite; }
+    .val { transform-box: fill-box; transform-origin: right center; animation: valPop .6s cubic-bezier(.2,.8,.3,1) both; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+    ${animate ? "" : "* { animation: none !important; }"}
   </style>`;
 }
 
@@ -254,7 +263,7 @@ function renderPinnedRepos(
 }
 
 export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
-  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, sectionSpacing = 0 } = opts;
+  const { theme, hideStats, showIcons, compact, hideAvatarRing = false, sectionSpacing = 0, animate = true } = opts;
   const br = opts.borderRadius;
   const P  = compact ? 18 : 24;
   const AV = compact ? 68 : 90;
@@ -269,6 +278,12 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   const blurId      = uid("blur");
   const hlId        = uid("hl");
   const avatarClipId = uid("aclip");
+  const clipId = uid("cclip");
+  const edgeId = uid("edge");
+  const shineId = uid("shine");
+  const blobA = uid("blobA");
+  const blobB = uid("blobB");
+  const barClipId = uid("bclip");
 
   const barFill = Array.isArray(theme.barFill)
     ? theme.barFill as [string, string]
@@ -308,7 +323,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
   const defs = `
     <defs>
-      ${buildAnimations()}
+      ${buildAnimations(animate)}
       ${theme.backgroundGradient
         ? linearGradient(bgGradId,
             [{offset:"0%",color:theme.backgroundGradient[0]},{offset:"100%",color:theme.backgroundGradient[1]}],
@@ -319,6 +334,15 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
       ${linearGradient(acGradId,  [{offset:"0%",color:theme.accentColor},{offset:"100%",color:theme.accentSecondary}])}
       ${linearGradient(ringGradId,[{offset:"0%",color:theme.accentColor},{offset:"100%",color:theme.accentSecondary}],"0%","0%","100%","100%")}
       ${linearGradient(hlId, [{offset:"0%",color:"#ffffff",opacity:0.05},{offset:"50%",color:"#ffffff",opacity:0}], "0%","0%","0%","100%")}
+      <clipPath id="${clipId}"><rect x="1" y="1" width="${W - 2}" height="${CARD_H - 2}" rx="${br}"/></clipPath>
+      <linearGradient id="${edgeId}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="0" spreadMethod="repeat">
+        <stop offset="0" stop-color="${theme.accentColor}"/><stop offset="0.5" stop-color="${theme.accentSecondary}"/><stop offset="1" stop-color="${theme.accentColor}"/>
+      </linearGradient>
+      <linearGradient id="${shineId}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="0.13"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+      </linearGradient>
+      <radialGradient id="${blobA}"><stop offset="0" stop-color="${theme.accentColor}" stop-opacity="0.24"/><stop offset="1" stop-color="${theme.accentColor}" stop-opacity="0"/></radialGradient>
+      <radialGradient id="${blobB}"><stop offset="0" stop-color="${theme.accentSecondary}" stop-opacity="0.2"/><stop offset="1" stop-color="${theme.accentSecondary}" stop-opacity="0"/></radialGradient>
       <clipPath id="${avatarClipId}">
         <circle cx="${P + AV/2}" cy="${P + AV/2}" r="${AV/2}"/>
       </clipPath>
@@ -343,6 +367,23 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
   `;
 
   const ACX = P + AV/2, ACY = P + AV/2, AR = AV/2;
+
+  const star = (cx: number, cy: number, sc: number, delay: number, color: string): string =>
+    `<path transform="translate(${cx.toFixed(0)} ${cy.toFixed(0)}) scale(${sc})" d="M0 -6 L1.6 -1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6 -1.6Z" fill="${color}" opacity="0.1"><animate attributeName="opacity" values="0.1;1;0.1" dur="${(2.6 + delay).toFixed(1)}s" begin="${delay}s" repeatCount="indefinite"/></path>`;
+  const ambient = animate
+    ? `<g clip-path="url(#${clipId})" pointer-events="none">
+    <circle cx="${W * 0.84}" cy="${CARD_H * 0.16}" r="130" fill="url(#${blobA})"><animate attributeName="cx" values="${W * 0.84};${W * 0.6};${W * 0.84}" dur="13s" repeatCount="indefinite"/><animate attributeName="cy" values="${CARD_H * 0.16};${CARD_H * 0.3};${CARD_H * 0.16}" dur="11s" repeatCount="indefinite"/></circle>
+    <circle cx="${W * 0.14}" cy="${CARD_H * 0.88}" r="150" fill="url(#${blobB})"><animate attributeName="cx" values="${W * 0.14};${W * 0.4};${W * 0.14}" dur="15s" repeatCount="indefinite"/><animate attributeName="cy" values="${CARD_H * 0.88};${CARD_H * 0.7};${CARD_H * 0.88}" dur="12s" repeatCount="indefinite"/></circle>
+    <rect x="0" y="1" width="${W * 2}" height="3" fill="url(#${edgeId})" opacity="0.95"><animateTransform attributeName="transform" type="translate" from="0 0" to="-${W} 0" dur="5s" repeatCount="indefinite"/></rect>
+    <g><animateTransform attributeName="transform" type="translate" values="-${Math.round(CARD_H * 0.45) + 140} 0;${W + 140} 0;${W + 140} 0" keyTimes="0;0.4;1" dur="8s" repeatCount="indefinite"/><g transform="skewX(-22)"><rect x="0" y="-20" width="72" height="${CARD_H + 40}" fill="url(#${shineId})"/></g></g>
+    ${star(W - 40, 34, 1.3, 0, theme.accentColor)}${star(W - 92, 72, 0.9, 0.8, theme.accentSecondary)}${star(W - 26, 128, 1.6, 1.6, theme.accentColor)}${star(W * 0.56, 24, 1, 2.2, theme.accentSecondary)}${star(W - 62, CARD_H * 0.52, 1.1, 1.1, theme.accentColor)}${star(26, CARD_H - 40, 1.2, 2.8, theme.accentSecondary)}
+  </g>`
+    : "";
+  const orbit = animate && !hideAvatarRing
+    ? `<g><animateTransform attributeName="transform" type="rotate" from="0 ${ACX} ${ACY}" to="360 ${ACX} ${ACY}" dur="12s" repeatCount="indefinite"/>
+      <circle cx="${ACX}" cy="${ACY}" r="${AR + 10}" fill="none" stroke="${theme.accentSecondary}" stroke-width="1.4" stroke-dasharray="3 9" opacity="0.7"/>
+      <circle cx="${ACX + AR + 10}" cy="${ACY}" r="3.2" fill="${theme.accentColor}"/><circle cx="${ACX - AR - 10}" cy="${ACY}" r="2.2" fill="${theme.accentSecondary}"/></g>`
+    : "";
   const avatarSrc = user.avatarBase64 ?? `${user.avatarUrl}?s=128`;
 
   const avatarSvg = `
@@ -355,6 +396,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
       stroke-linecap="round"
       class="avatar-ring"
     />` : ""}
+    ${orbit}
   `;
 
   const nameX = P + AV + 22;
@@ -416,12 +458,12 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 
       statsSvg += `
         <g class="stat-row-${Math.min(i, 6)}">
-          ${showIcons ? `<image href="${inlineIcon(stat.iconName, theme.iconColor, 12)}" x="${sx+1}" y="${sy}" width="12" height="12"/>` : ""}
+          ${showIcons ? `<image class="ico" style="animation-delay:${(i * 0.35).toFixed(2)}s" href="${inlineIcon(stat.iconName, theme.iconColor, 12)}" x="${sx+1}" y="${sy}" width="12" height="12"/>` : ""}
           <text x="${showIcons ? sx+17 : sx}" y="${sy+10}"
             font-family="system-ui,sans-serif"
             font-size="${compact ? 10 : 10.5}" fill="${theme.subTextColor}"
           >${escapeXml(stat.label)}</text>
-          <text x="${valX}" y="${sy+10}"
+          <text class="val" style="animation-delay:${(0.2 + i * 0.06).toFixed(2)}s" x="${valX}" y="${sy+10}"
             font-family="'SF Mono',ui-monospace,monospace"
             font-size="${compact ? 11 : 12}" font-weight="700"
             fill="${theme.statValueColor}" text-anchor="end"
@@ -448,6 +490,10 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
       langSvg += `<rect x="${P+xOff}" y="${LY+6}" width="${segW}" height="9" fill="${l.color}" rx="2" class="bar-fill"/>`;
       xOff += segW;
     });
+    if (animate) {
+      langSvg += `<clipPath id="${barClipId}"><rect x="${P}" y="${LY + 6}" width="${barW}" height="9" rx="4.5"/></clipPath>
+        <g clip-path="url(#${barClipId})"><rect x="${P - 70}" y="${LY + 6}" width="70" height="9" fill="url(#${shineId})"><animate attributeName="x" from="${P - 70}" to="${P + barW}" dur="2.8s" begin="1.4s" repeatCount="indefinite"/></rect></g>`;
+    }
 
     for (let row = 0; row < langRows; row++) {
       for (let col = 0; col < 4; col++) {
@@ -480,7 +526,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
           ${linearGradient(bgId,[{offset:"0%",color:theme.badgeBg},{offset:"100%",color:theme.background}],"0%","0%","0%","100%")}
           ${linearGradient(bdrId,[{offset:"0%",color:theme.accentColor},{offset:"100%",color:theme.accentSecondary}])}
         </defs>
-        ${hot ? `<rect x="${x-1}" y="${SY+5}" width="${thirdW+2}" height="48" rx="11" fill="${theme.accentColor}" opacity="0.08" filter="url(#${blurId})"/>` : ""}
+        ${hot ? `<rect x="${x-1}" y="${SY+5}" width="${thirdW+2}" height="48" rx="11" fill="${theme.accentColor}" opacity="0.08" filter="url(#${blurId})" class="hot"/>` : ""}
         <rect x="${x}" y="${SY+6}" width="${thirdW}" height="46" rx="10"
           fill="url(#${bgId})" stroke="url(#${bdrId})" stroke-width="1.2"/>
         <text x="${x+thirdW/2}" y="${SY+19}" text-anchor="middle"
@@ -529,6 +575,7 @@ export function renderStatsCard(user: GitHubUser, opts: RenderOptions): string {
 >
   ${defs}
   ${cardBg}
+  ${ambient}
   ${avatarSvg}
   ${headerSvg}
   ${metaSvg}

@@ -105,6 +105,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       borderRadius: br,
       hideAvatarRing,
       sectionSpacing,
+      animate: req.query["animate"] !== "false",
     });
 
     res.status(200).send(svg);
@@ -124,4 +125,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
   }
 }
-

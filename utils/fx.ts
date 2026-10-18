@@ -41,7 +41,7 @@ export function aurora(a: string, b: string): [string, string, string] {
   return [a, b, shiftHue(a, 70)];
 }
 
-export function colorCycle(attr: "fill" | "stroke" | "stop-color", colors: string[], dur: number, begin = 0): string {
+function colorCycle(attr: "fill" | "stroke" | "stop-color", colors: string[], dur: number, begin = 0): string {
   const vals = [...colors, colors[0]].join(";");
   return `<animate attributeName="${attr}" values="${vals}" dur="${dur}s" begin="${begin}s" repeatCount="indefinite" calcMode="linear"/>`;
 }

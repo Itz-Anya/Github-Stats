@@ -32,6 +32,18 @@
     "api/streak.ts": {
       "memory": 512,
       "maxDuration": 20
+    },
+    "api/about.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    },
+    "api/typing.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    },
+    "api/repo.ts": {
+      "memory": 256,
+      "maxDuration": 10
     }
   },
   "headers": [
@@ -89,6 +101,18 @@
     {
       "src": "/api/streak",
       "dest": "/api/streak.ts"
+    },
+    {
+      "src": "/api/about",
+      "dest": "/api/about.ts"
+    },
+    {
+      "src": "/api/typing",
+      "dest": "/api/typing.ts"
+    },
+    {
+      "src": "/api/repo",
+      "dest": "/api/repo.ts"
     },
     {
       "src": "/api/(.*)",

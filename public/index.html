@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark light" />
 <title>GitHub Stats Card Generator</title>
-<meta name="description" content="Create animated GitHub README cards: stats, profile, languages, pinned repos, contributions, streak, trophies and banner. 60+ themes, live preview, one-click copy." />
+<meta name="description" content="Create animated GitHub README cards: stats, profile, languages, pinned repos, contributions, streak, trophies, banner, about, typing text and code quotes. 60+ themes, live preview, one-click copy." />
 <meta name="author" content="Anya & Murali" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="GitHub Stats Card Generator" />
@@ -134,6 +134,7 @@ header.top { display: flex; align-items: center; justify-content: space-between;
 select, .text { background: var(--panel-strong); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; outline: 0; font-size: 0.9rem; }
 select { background-color: var(--bg2); }
 .text { width: 100%; margin-top: 8px; }
+.text.area { min-height: 220px; resize: vertical; font-family: var(--mono); font-size: 0.82rem; line-height: 1.5; }
 select:focus, .text:focus { border-color: var(--b); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .chip { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-size: 0.8rem; font-weight: 500; transition: 0.2s; }
@@ -192,7 +193,6 @@ select:focus, .text:focus { border-color: var(--b); }
 .tile img { width: 100%; height: auto; display: block; }
 .tile.wide { grid-column: 1 / -1; }
 
-
 @media (max-width: 960px) {
   .stage { position: static; order: -1; }
   .studio { gap: 16px; }
@@ -234,6 +234,7 @@ footer a { color: var(--text); font-weight: 600; text-decoration: none; }
 footer a:hover { color: var(--a); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 30px); opacity: 0; padding: 11px 18px; border-radius: 12px; background: var(--bg2); border: 1px solid var(--line); box-shadow: var(--shadow); font-weight: 600; font-size: 0.9rem; z-index: 20; transition: 0.3s; pointer-events: none; }
 .toast.on { transform: translate(-50%, 0); opacity: 1; }
+[hidden] { display: none !important; }
 </style>
 </head>
 <body>
@@ -251,7 +252,7 @@ footer a:hover { color: var(--a); }
 
   <section class="hero">
     <h1>Make your GitHub profile <span class="grad">move</span></h1>
-    <p>Pick a card, pick a theme, copy one line into your README. Eight animated cards, 60+ themes, all rendered live.</p>
+    <p>Pick a card, pick a theme, copy one line into your README. Twelve animated cards, 60+ themes, all rendered live.</p>
     <form class="userbar" id="userForm" autocomplete="off">
       <span>@</span>
       <input id="username" type="text" placeholder="your-github-username" spellcheck="false" autocapitalize="off" aria-label="GitHub username" maxlength="39" />
@@ -267,12 +268,12 @@ footer a:hover { color: var(--a); }
         <h3>Options <span id="cardName"></span></h3>
         <div id="options"></div>
       </section>
-      <section class="panel">
+      <section class="panel" id="themePanel">
         <h3>Theme <span id="themeName"></span></h3>
         <div class="cats" id="cats"></div>
         <div class="swatches" id="swatches"></div>
       </section>
-      <section class="panel">
+      <section class="panel" id="stylePanel">
         <h3>Style</h3>
         <div class="row">
           <label for="radius">Corner radius<small>Overrides the theme default</small></label>
@@ -331,13 +332,24 @@ const ICON = {
   contrib: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   streak: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
   trophies: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0z"/>',
-  banner: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>'
+  banner: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/>',
+  repo: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  about: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M15 9h3M15 13h3M6 17c.6-2 2-3 3-3s2.4 1 3 3"/>',
+  typing: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+  quote: '<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>'
 };
 
 const STAT_HIDE = ["repos", "stars", "forks", "commits", "prs", "issues", "reviews", "followers", "following", "gists", "watchers"];
 const SECTION_HIDE = ["stats", "languages", "streakinfo", "pinned"];
 const yearNow = new Date().getFullYear();
 const YEARS = [["", "Last 12 months"], ...Array.from({ length: Math.min(yearNow - 2008, 12) + 1 }, (_, i) => [String(yearNow - i), String(yearNow - i)])];
+
+const ABOUT_FONTS = ["Outfit", "Sora", "Space Grotesk", "Bricolage Grotesque", "Plus Jakarta Sans", "DM Sans", "Manrope", "Poppins", "Lexend", "Nunito", "Quicksand", "Comfortaa", "Fredoka", "Baloo 2", "Syne", "Unbounded", "Chakra Petch", "Oxanium", "Righteous", "Pixelify Sans", "Silkscreen", "Special Elite", "Fraunces", "Playfair Display", "Instrument Serif", "Gloock", "Caveat", "Kalam", "Patrick Hand", "Indie Flower", "Gochi Hand", "Shadows Into Light", "JetBrains Mono", "Geist Mono", "Space Mono", "Fira Code", "Victor Mono"];
+const REPO_HIDE_HEADER = ["avatar", "stars", "forks", "badges", "license", "language", "branch"];
+const REPO_HIDE_TILES = ["watchers", "issues", "prs", "commits", "contributors", "releases", "branches", "size", "created", "updated"];
+const REPO_HIDE_SECTIONS = ["description", "topics", "stats", "languages", "commit", "release", "footer"];
+const TYPING_FONTS = ["JetBrains Mono", "Geist Mono", "Fira Code", "Space Mono", "Red Hat Mono", "Victor Mono", "Source Code Pro", "IBM Plex Mono", "Roboto Mono", "Ubuntu Mono", "Inconsolata", "Courier Prime", "Press Start 2P", "Space Grotesk", "Syne", "Unbounded", "Sora", "Outfit", "Bricolage Grotesque", "Lexend", "Fredoka", "Chakra Petch", "Oxanium", "Michroma", "Silkscreen", "Pixelify Sans", "Rubik Glitch", "Monoton", "Rubik Mono One", "Climate Crisis", "Special Elite", "Gloock", "Instrument Serif", "Fraunces", "Caveat", "Kalam", "Gochi Hand", "Shadows Into Light"];
+const QUOTE_THEMES = ["dark", "light", "github", "dracula", "nord", "monokai", "solarized", "gruvbox", "onedark", "tokyonight", "catppuccin", "synthwave", "ayu", "rosepine"];
 
 const CARDS = {
   stats: {
@@ -385,11 +397,56 @@ const CARDS = {
       { k: "columns", t: "select", def: "4", label: "Columns", choices: [["2", "2"], ["3", "3"], ["4", "4"]] }
     ]
   },
-  banner: { label: "Banner", path: "banner", options: [{ k: "hide_stats", t: "bool", def: false, label: "Hide stats row" }] }
+  banner: { label: "Banner", path: "banner", options: [{ k: "hide_stats", t: "bool", def: false, label: "Hide stats row" }] },
+  about: {
+    label: "About", path: "about", skipAll: true, wide: true,
+    options: [
+      { k: "query", t: "textarea", label: "About text (one row per line, a dashed line under a title draws a divider)", placeholder: "About Me\n-------------------------\nName: Your name\nLoves: Coding, Music\nStatus: Building cool stuff" },
+      { k: "font", t: "select", def: "Outfit", label: "Font", choices: ABOUT_FONTS.map((f) => [f, f]) },
+      { k: "avatar", t: "bool", def: true, label: "Show avatar" },
+      { k: "randompfp", t: "bool", def: false, label: "Random neko picture instead of GitHub avatar" },
+      { k: "loop", t: "bool", def: false, label: "Replay line animation forever" }
+    ]
+  },
+  repo: {
+    label: "Repository", path: "repo", noUser: true, wide: true, base: { repo: "Itz-Murali/Chiku-Ai" },
+    options: [
+      { k: "repo", t: "text", label: "Repository (owner/name or full URL)", placeholder: "Itz-Murali/Chiku-Ai or https://github.com/owner/repo" },
+      { k: "font", t: "select", def: "Outfit", label: "Font", choices: ABOUT_FONTS.map((f) => [f, f]) },
+      { k: "title", t: "text", label: "Custom title", placeholder: "Leave empty to use the repo name" },
+      { k: "description", t: "text", label: "Custom description", placeholder: "Leave empty to use the GitHub description" },
+      { k: "show_owner", t: "bool", def: true, label: "Show owner in title" },
+      { k: "columns", t: "range", min: 2, max: 6, def: 5, label: "Stat columns" },
+      { k: "width", t: "range", min: 640, max: 1400, def: 1000, label: "Card width" },
+      { k: "max_topics", t: "range", min: 0, max: 12, def: 8, label: "Topics shown" },
+      { k: "max_langs", t: "range", min: 0, max: 10, def: 6, label: "Languages shown" },
+      { k: "hide", t: "multi", label: "Hide parts", groups: [["Header", REPO_HIDE_HEADER], ["Stat tiles", REPO_HIDE_TILES], ["Sections", REPO_HIDE_SECTIONS]] }
+    ]
+  },
+  typing: {
+    label: "Typing", path: "typing", noUser: true, noTheme: true, skipAll: true, wide: true,
+    options: [
+      { k: "text", t: "text", label: "Text (use ; for next line)", placeholder: "Hi there, I'm a developer; I love building things" },
+      { k: "font", t: "select", def: "JetBrains Mono", label: "Font", choices: TYPING_FONTS.map((f) => [f, f]) },
+      { k: "color", t: "text", label: "Color (hex, comma for gradient)", placeholder: "00ff9c or ff0080,7928ca" },
+      { k: "size", t: "range", min: 12, max: 64, def: 28, label: "Font size" },
+      { k: "speed", t: "range", min: 30, max: 300, def: 80, label: "Speed (ms per letter)" },
+      { k: "pause", t: "range", min: 0, max: 5000, def: 1200, label: "Pause (ms)" },
+      { k: "center", t: "bool", def: false, label: "Center text" },
+      { k: "cursor", t: "bool", def: true, label: "Show cursor (monospace fonts)" },
+      { k: "erase", t: "bool", def: true, label: "Erase before next line" },
+      { k: "weight", t: "select", def: "", label: "Weight", choices: [["", "Regular"], ["700", "Bold"]] },
+      { k: "bg", t: "text", label: "Background (hex, optional)", placeholder: "0d1117" }
+    ]
+  },
+  quote: {
+    label: "Code Quote", path: "quote.svg", external: "https://code-quote.vercel.app/api/quote.svg", noUser: true, noTheme: true,
+    options: [{ k: "theme", t: "select", def: "dark", label: "Theme", choices: QUOTE_THEMES.map((t) => [t, t]) }]
+  }
 };
 
 const FEATURED = ["profile", "langstack", "pinned", "contrib"];
-const ORDER = ["stats", "profile", "langstack", "pinned", "contrib", "streak", "trophies", "banner"];
+const ORDER = ["stats", "profile", "langstack", "pinned", "contrib", "streak", "trophies", "banner", "repo", "about", "typing", "quote"];
 
 const state = {
   card: "profile",
@@ -431,10 +488,13 @@ function cardVals(card) {
 function buildUrl(card, { absolute = true, preview = false, plain = false } = {}) {
   const c = CARDS[card];
   const p = new URLSearchParams();
-  p.set("username", state.username || "octocat");
-  if (state.theme !== "dark") p.set("theme", state.theme);
-  if (state.radius !== null) p.set("border_radius", String(state.radius));
-  if (!state.animate) p.set("animate", "false");
+  if (!c.noUser) p.set("username", state.username || "Itz-Murali");
+  if (!c.noTheme) {
+    if (state.theme !== "dark") p.set("theme", state.theme);
+    if (state.radius !== null) p.set("border_radius", String(state.radius));
+    if (!state.animate) p.set("animate", "false");
+  }
+  if (c.base) for (const [bk, bv] of Object.entries(c.base)) p.set(bk, bv);
   const v = cardVals(card);
   for (const o of plain ? [] : c.options) {
     const cur = v[o.k];
@@ -443,24 +503,31 @@ function buildUrl(card, { absolute = true, preview = false, plain = false } = {}
       if (cur !== o.def) p.set(o.k, String(cur));
     } else if (o.t === "multi") {
       if (cur.length) p.set(o.k, cur.join(","));
-    } else if (o.t === "text") {
+    } else if (o.t === "text" || o.t === "textarea") {
       if (String(cur).trim()) p.set(o.k, String(cur).trim());
     } else if (String(cur) !== String(o.def)) {
       p.set(o.k, String(cur));
     }
   }
   const origin = absolute ? BASE : "";
-  const base = `${origin}/api/${c.path}`;
-  return `${base}?${p.toString()}${preview ? `&_=${preview}` : ""}`;
+  const base = c.external || `${origin}/api/${c.path}`;
+  const qs = p.toString();
+  return `${base}${qs || preview ? "?" : ""}${qs}${preview ? `${qs ? "&" : ""}_=${preview}` : ""}`;
 }
+
+const mdSafe = (u) => u.replace(/\(/g, "%28").replace(/\)/g, "%29");
 
 function snippet(card, kind) {
   const url = buildUrl(card);
-  const user = state.username || "octocat";
+  const user = state.username || "Itz-Murali";
   const alt = `${user} GitHub ${CARDS[card].label}`;
   if (kind === "url") return url;
+  if (CARDS[card].noUser) {
+    const a = CARDS[card].label;
+    return kind === "html" ? `<img src="${url}" alt="${a}" />` : `![${a}](${mdSafe(url)})`;
+  }
   if (kind === "html") return `<a href="https://github.com/${user}">\n  <img src="${url}" alt="${alt}" width="100%" />\n</a>`;
-  return `[![${alt}](${url})](https://github.com/${user})`;
+  return `[![${alt}](${mdSafe(url)})](https://github.com/${user})`;
 }
 
 function toast(msg) {
@@ -548,6 +615,15 @@ function renderOptions() {
         refresh();
       });
       box.appendChild(row);
+    } else if (o.t === "textarea") {
+      const row = el("div", {}, `<div class="row" style="border:0;padding-bottom:0"><label for="o_${o.k}">${o.label}</label></div><textarea class="text area" id="o_${o.k}" rows="12" placeholder="${(o.placeholder || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;")}" spellcheck="false"></textarea>`);
+      const ta = row.querySelector("textarea");
+      ta.value = v[o.k] ?? "";
+      ta.addEventListener("input", (e) => {
+        v[o.k] = e.target.value;
+        refresh();
+      });
+      box.appendChild(row);
     } else if (o.t === "multi") {
       v[o.k] ??= [];
       const wrap = el("div", {}, `<div class="row" style="border:0;padding-bottom:0"><label>${o.label}<small>Tap to hide</small></label></div>`);
@@ -630,7 +706,10 @@ function renderOutTabs() {
 function updateCode() {
   $("#code").textContent = snippet(state.card, state.out);
   $("#openSvg").href = buildUrl(state.card, { absolute: false });
-  $("#pathMeta").textContent = `/api/${CARDS[state.card].path}`;
+  const cc = CARDS[state.card];
+  $("#pathMeta").textContent = cc.external ? new URL(cc.external).host + new URL(cc.external).pathname : `/api/${cc.path}`;
+  $("#themePanel").hidden = !!cc.noTheme;
+  $("#stylePanel").hidden = !!cc.noTheme;
 }
 
 let previewToken = 0;
@@ -689,7 +768,7 @@ function renderGallery() {
   g.innerHTML = "";
   const order = [...FEATURED, ...ORDER.filter((k) => !FEATURED.includes(k))];
   order.forEach((k, i) => {
-    const wide = k === "stats" || k === "banner" || k === "trophies" || k === "streak";
+    const wide = k === "stats" || k === "banner" || k === "trophies" || k === "streak" || !!CARDS[k].wide;
     const t = el("button", { class: `tile${wide ? " wide" : ""}`, type: "button" }, `<div class="head"><b>${CARDS[k].label}</b>${FEATURED.includes(k) ? '<span class="badge">Live</span>' : ""}</div><div class="shot"><img alt="${CARDS[k].label} preview" loading="lazy" /></div>`);
     t.addEventListener("click", () => {
       selectCard(k);
@@ -717,11 +796,12 @@ function init() {
   const theme = q.get("theme");
   if (card && CARDS[card]) state.card = card;
   if (theme && (DATA.colors[theme] || theme === "random")) state.theme = theme;
+  cardVals("repo").repo = "Itz-Murali/Chiku-Ai";
   state.username = u;
   $("#username").value = u;
   if (!u) {
-    state.username = "Itz-Anya";
-    $("#username").placeholder = "Itz-Anya";
+    state.username = "Itz-Murali";
+    $("#username").placeholder = "Itz-Murali";
   }
 
   $("#userForm").addEventListener("submit", (e) => {
@@ -746,7 +826,7 @@ function init() {
   $("#reload").addEventListener("click", () => updatePreview(true));
   $("#copy").addEventListener("click", (e) => copyText($("#code").textContent, e.currentTarget));
   $("#copyAll").addEventListener("click", () => {
-    const text = ORDER.map((k) => snippet(k, state.out === "html" ? "html" : "markdown")).join("\n\n");
+    const text = ORDER.filter((k) => !CARDS[k].skipAll).map((k) => snippet(k, state.out === "html" ? "html" : "markdown")).join("\n\n");
     copyText(text);
   });
 

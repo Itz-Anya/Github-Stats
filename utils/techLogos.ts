@@ -30,7 +30,7 @@ const FRAMEWORK_SLUGS: Record<string, string> = {
 
 const DARK_LOGO_SLUGS = new Set(["nextjs", "express", "flask", "rust", "django", "bash", "zig"]);
 
-export function logoSlug(item: Pick<TechItem, "key" | "kind">): string | undefined {
+function logoSlug(item: Pick<TechItem, "key" | "kind">): string | undefined {
   return item.kind === "framework" ? FRAMEWORK_SLUGS[item.key] : LANGUAGE_SLUGS[item.key];
 }
 

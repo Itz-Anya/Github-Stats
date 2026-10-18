@@ -78,7 +78,7 @@ const TOPIC_TO_TECH: Record<string, string> = {
   discordjs: "nodejs",
 };
 
-export const FRAMEWORK_NAMES: Record<string, string> = {
+const FRAMEWORK_NAMES: Record<string, string> = {
   react: "React", nextjs: "Next.js", vue: "Vue", nuxt: "Nuxt", angular: "Angular",
   svelte: "Svelte", nodejs: "Node.js", express: "Express", django: "Django",
   flask: "Flask", fastapi: "FastAPI", spring: "Spring", laravel: "Laravel",

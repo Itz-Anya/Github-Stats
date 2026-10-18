@@ -30,12 +30,15 @@ Open the generator at [anya-github-stats.vercel.app](https://anya-github-stats.v
 | Streak | `/api/streak` | `include_private`, `hide_title` |
 | Trophies | `/api/trophies` | `columns` (2-4), `include_private`, `hide_title` |
 | Banner | `/api/banner` | `hide_stats` |
+| About | `/api/about` | `query`, `username`, `randompfp`, `avatar`, `font`, `size`, `loop`, `theme` |
+| Repo | `/api/repo` | `repo` (owner/name or URL), `hide`, `title`, `description`, `font`, `columns`, `width`, `max_topics`, `max_langs`, `show_owner` |
+| Typing | `/api/typing` | `text` (`;` = next line), `font`, `color`, `size`, `speed`, `pause`, `width`, `height`, `center`, `cursor`, `erase`, `weight`, `bg` |
 
 Parameters shared by every card:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `username` | required | GitHub username |
+| `username` | required (not for `repo`, `typing`) | GitHub username |
 | `theme` | `dark` | Any theme name, or `random` |
 | `border_radius` | theme default | 0-28 |
 | `animate` | `true` | `false` returns a static SVG |
