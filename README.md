@@ -8,6 +8,8 @@ Animated GitHub README cards as a single URL. Deploy on Vercel in one click.
 
 <img src="https://anya-github-stats.vercel.app/api/profile?username=Itz-Anya&theme=tokyonight" width="100%" alt="Profile card" />
 
+![Repository](https://anya-github-stats.vercel.app/api/repo?theme=cotton_candy&repo=Itz-Anya%2FGithub-Stats&font=Playfair+Display&width=777&hide=watchers%2Cissues%2Cprs%2Cbranches%2Creleases)
+
 </div>
 
 ## Use it
